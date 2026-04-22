@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../Css/Global.css" />
+
+    <title>Your Cart | Lila Cloth</title>
+    <style>
+      /* Iframe Styles */
+      .nav-frame {
+        width: 100%;
+        height: 85px;
+        border: none;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: white;
+      }
+
+      .footer-frame {
+        width: 100%;
+        height: 320px; /* Adjust based on content */
+        border: none;
+        margin-top: auto;
+      }
+
+      /* Main Content Container */
+      .cart-container {
+        flex: 1;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+        width: 100%;
+      }
+
+      h1 {
+        color: var(--text-dark);
+        border-bottom: 2px solid var(--primary-blue);
+        display: inline-block;
+        margin-bottom: 30px;
+        padding-bottom: 5px;
+      }
+
+      /* Cart Item Card */
+      .cart-item {
+        display: flex;
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        gap: 25px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      }
+
+      /* Left Side: Photo & Controls */
+      .item-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        min-width: 160px;
+      }
+
+      .photo-box {
+        width: 150px;
+        height: 150px;
+        background: #f9f9f9;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+      }
+
+      .photo-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        padding: 5px 10px;
+        border-radius: 10px;
+        border: 1px solid #eee;
+      }
+
+      .qty-btn {
+        background: none;
+        border: 1px solid #ddd;
+        width: 25px;
+        height: 25px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        color: var(--text-dark);
+      }
+
+      .qty-btn:hover {
+        border-color: var(--primary-pink);
+        color: var(--primary-pink);
+      }
+
+      .trash-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.1rem;
+        color: #ff6b6b;
+        margin-left: 5px;
+        display: flex;
+        align-items: center;
+      }
+
+      /* Right Side: Details */
+      .item-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .field {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1.5px solid #f0f0f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        background: #fafafa;
+      }
+
+      .item-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+        border-color: var(--primary-blue);
+        background: #fff;
+      }
+
+      .item-subtotal {
+        color: var(--primary-purple);
+        font-weight: 600;
+      }
+
+      .item-desc {
+        height: 60px;
+        font-size: 0.85rem;
+        color: #777;
+        overflow-y: auto;
+      }
+
+      /* Bottom Bar: Total & Checkout */
+      .cart-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        border: 2px solid var(--primary-blue);
+      }
+
+      .total-display {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--text-dark);
+      }
+
+      .total-display span {
+        color: var(--primary-purple);
+        margin-left: 10px;
+      }
+
+      .checkout-btn {
+        padding: 15px 40px;
+        background: linear-gradient(
+          to right,
+          var(--primary-pink),
+          var(--primary-purple)
+        );
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(194, 159, 255, 0.3);
+      }
+
+      .checkout-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+      }
+
+      @media (max-width: 600px) {
+        .cart-item {
+          flex-direction: column;
+          align-items: center;
+        }
+        .item-left {
+          width: 100%;
+        }
+        .cart-summary {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <iframe src="../NavBar.html" class="nav-frame" scrolling="no"></iframe>
+
+    <main class="cart-container">
+      <h1>Shopping Cart</h1>
+
+      <!-- Cart Item 1 -->
+      <div class="cart-item">
+        <div class="item-left">
+          <div class="photo-box">
+            <img
+              src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&q=80&w=200"
+              alt="Item"
+            />
+          </div>
+          <div class="quantity-controls">
+            <button class="qty-btn">-</button>
+            <span>1</span>
+            <button class="qty-btn">+</button>
+            <button class="trash-btn">🗑️</button>
+          </div>
+        </div>
+        <div class="item-right">
+          <div class="field item-name">Silk Floral Midi Dress</div>
+          <div class="field">Price: $89.00</div>
+          <div class="field item-subtotal">Subtotal: $89.00</div>
+          <div class="field item-desc">
+            Premium silk fabric with a hand-painted floral pattern. Perfect for
+            garden parties and elegant evenings.
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Item 2 -->
+      <div class="cart-item">
+        <div class="item-left">
+          <div class="photo-box">
+            <img
+              src="https://images.unsplash.com/photo-1591033594798-33227a05780d?auto=format&fit=crop&q=80&w=200"
+              alt="Item"
+            />
+          </div>
+          <div class="quantity-controls">
+            <button class="qty-btn">-</button>
+            <span>2</span>
+            <button class="qty-btn">+</button>
+            <button class="trash-btn">🗑️</button>
+          </div>
+        </div>
+        <div class="item-right">
+          <div class="field item-name">Pastel Dream Blazer</div>
+          <div class="field">Price: $120.00</div>
+          <div class="field item-subtotal">Subtotal: $240.00</div>
+          <div class="field item-desc">
+            Tailored wool-blend blazer in soft lavender. Features silk lining
+            and polished buttons.
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Total Section -->
+      <div class="cart-summary">
+        <div class="total-display">Total: <span>$329.00</span></div>
+        <button class="checkout-btn">Checkout</button>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <iframe src="../Footer.html" class="footer-frame" scrolling="no"></iframe>
+  </body>
+</html>
