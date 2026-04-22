@@ -7,6 +7,7 @@ from config import config
 from models import db
 from routes.auth_routes import auth_bp
 from routes.dashboard_routes import dashboard_bp
+from routes.admin_routes import admin_bp
 
 
 migrate = Migrate()
@@ -27,6 +28,7 @@ def create_app(config_name=None):
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(admin_bp)
 
     @app.get('/api')
     def index():
@@ -45,6 +47,21 @@ def create_app(config_name=None):
                     'GET / (Customer home)',
                     'GET /supplier-dashboard',
                     'GET /admin-dashboard',
+                ],
+                'admin': [
+                    'GET  /api/admin/customers',
+                    'GET  /api/admin/suppliers',
+                    'GET  /api/admin/users/<id>',
+                    'POST /api/admin/users',
+                    'DELETE /api/admin/users/<id>',
+                    'GET  /api/admin/products?status=',
+                    'GET  /api/admin/products/search?keyword=',
+                    'POST /api/admin/products',
+                    'PATCH /api/admin/products/<id>/approve',
+                    'PATCH /api/admin/products/<id>/reject',
+                    'DELETE /api/admin/products/<id>',
+                    'GET  /api/admin/orders',
+                    'GET  /api/admin/orders/<id>',
                 ],
             },
         })
