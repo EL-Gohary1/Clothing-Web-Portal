@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lila Cloth | Elegant Women's Fashion</title>
+    <style>
+      :root {
+        --primary-pink: #ff8eb2;
+        --primary-purple: #c29fff;
+        --primary-blue: #8edfff;
+        --text-dark: #4a4a4a;
+        --bg-light: #fefefe;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", sans-serif;
+        background-color: var(--bg-light);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Iframe Styles */
+      .nav-frame {
+        width: 100%;
+        height: 85px;
+        border: none;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: white;
+      }
+
+      .footer-frame {
+        width: 100%;
+        height: 320px; /* Adjust based on content */
+        border: none;
+        margin-top: auto;
+      }
+
+      /* Search Section */
+      .search-container {
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      .search-bar {
+        width: 100%;
+        max-width: 700px;
+        padding: 15px 25px;
+        border: 2px solid var(--primary-blue);
+        border-radius: 50px;
+        font-size: 1rem;
+        outline: none;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(142, 223, 255, 0.2);
+      }
+
+      .search-bar:focus {
+        border-color: var(--primary-purple);
+        box-shadow: 0 4px 15px rgba(194, 159, 255, 0.3);
+      }
+
+      /* Product Grid */
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        padding: 0 5% 60px 5%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Product Card */
+      .card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #eee;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .photo-area {
+        width: 100%;
+        height: 320px;
+        background-color: #f9f9f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .photo-area img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .card-details {
+        padding: 20px;
+        text-align: center;
+      }
+
+      .card-details .name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 5px;
+      }
+
+      .card-details .desc {
+        font-size: 0.9rem;
+        color: #777;
+        margin-bottom: 15px;
+        height: 40px;
+      }
+
+      .card-details .price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary-purple);
+        margin-bottom: 5px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #888;
+        margin-bottom: 15px;
+        padding: 0 10px;
+      }
+
+      /* Quantity Selector */
+      .quantity-selector {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .qty-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: white;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+
+      .qty-btn:hover {
+        background: #f0f0f0;
+        border-color: var(--primary-pink);
+      }
+
+      /* Add to Cart Button */
+      .add-to-cart {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(
+          to right,
+          var(--primary-pink),
+          var(--primary-purple)
+        );
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .add-to-cart:hover {
+        opacity: 0.9;
+        transform: scale(1.02);
+      }
+
+      @media (max-width: 600px) {
+        .product-grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-frame {
+          height: 70px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- REUSABLE NAVBAR -->
+    <iframe src="navbar.html" class="nav-frame" scrolling="no"></iframe>
+
+    <main>
+      <!-- SEARCH BAR -->
+      <section class="search-container">
+        <input
+          type="text"
+          class="search-bar"
+          placeholder="Search for dresses, tops, or accessories..."
+        />
+      </section>
+
+      <!-- PRODUCT GRID -->
+      <section class="product-grid">
+        <!-- Card 1 -->
+        <div class="card">
+          <div class="photo-area">
+            <img
+              src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&q=80&w=400"
+              alt="Dress"
+            />
+          </div>
+          <div class="card-details">
+            <div class="name">Silk Floral Midi</div>
+            <div class="desc">
+              Elegant summer silk dress with hand-painted patterns.
+            </div>
+            <div class="price">$89.00</div>
+            <div class="info-row">
+              <span>Stock: 12 items</span>
+              <span>Supplier: Lila Luxe</span>
+            </div>
+            <div class="quantity-selector">
+              <button class="qty-btn">-</button>
+              <span>1</span>
+              <button class="qty-btn">+</button>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+          <div class="photo-area">
+            <img
+              src="https://images.unsplash.com/photo-1591033594798-33227a05780d?auto=format&fit=crop&q=80&w=400"
+              alt="Blazer"
+            />
+          </div>
+          <div class="card-details">
+            <div class="name">Pastel Dream Blazer</div>
+            <div class="desc">
+              Tailored fit blazer in soft lavender wool blend.
+            </div>
+            <div class="price">$120.00</div>
+            <div class="info-row">
+              <span>Stock: 5 items</span>
+              <span>Supplier: Urban Chic</span>
+            </div>
+            <div class="quantity-selector">
+              <button class="qty-btn">-</button>
+              <span>1</span>
+              <button class="qty-btn">+</button>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+          <div class="photo-area">
+            <img
+              src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=400"
+              alt="Knitwear"
+            />
+          </div>
+          <div class="card-details">
+            <div class="name">Cloud Soft Sweater</div>
+            <div class="desc">
+              Ultra-soft mohair knit perfect for cozy evenings.
+            </div>
+            <div class="price">$65.00</div>
+            <div class="info-row">
+              <span>Stock: 20 items</span>
+              <span>Supplier: Lila Basic</span>
+            </div>
+            <div class="quantity-selector">
+              <button class="qty-btn">-</button>
+              <span>1</span>
+              <button class="qty-btn">+</button>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- REUSABLE FOOTER -->
+    <iframe src="footer.html" class="footer-frame" scrolling="no"></iframe>
+  </body>
+</html>
