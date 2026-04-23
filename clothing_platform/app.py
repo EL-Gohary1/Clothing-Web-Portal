@@ -1,12 +1,13 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_migrate import Migrate
 
 from config import config
 from models import db
 from routes.auth_routes import auth_bp
 from routes.dashboard_routes import dashboard_bp
+from routes.customer_routes import customer_bp
 from routes.admin_routes import admin_bp
 
 
@@ -28,7 +29,21 @@ def create_app(config_name=None):
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(customer_bp)
     app.register_blueprint(admin_bp)
+
+    # Serve static files for iframes
+    @app.route('/Css/<path:filename>')
+    def serve_css(filename):
+        return send_from_directory('templates/Css', filename)
+
+    @app.route('/NavBar.html')
+    def serve_navbar():
+        return send_from_directory('templates', 'NavBar.html')
+
+    @app.route('/Footer.html')
+    def serve_footer():
+        return send_from_directory('templates', 'Footer.html')
 
     @app.get('/api')
     def index():

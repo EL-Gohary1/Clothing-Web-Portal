@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/Global.css" />
+    <link rel="stylesheet" href="/static/cart.css" />
+    <title>Your Cart | Lila Cloth</title>
+   
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <iframe src="/static/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
+
+    <main class="cart-container">
+      <h1>Shopping Cart</h1>
+
+      <!-- Cart Item 1 -->
+      <div class="cart-item">
+        <div class="item-left">
+          <div class="photo-box">
+            <img
+              src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&q=80&w=200"
+              alt="Item"
+            />
+          </div>
+          <div class="quantity-controls">
+            <button class="qty-btn">-</button>
+            <span>1</span>
+            <button class="qty-btn">+</button>
+            <button class="trash-btn">🗑️</button>
+          </div>
+        </div>
+        <div class="item-right">
+          <div class="field item-name">Silk Floral Midi Dress</div>
+          <div class="field">Price: $89.00</div>
+          <div class="field item-subtotal">Subtotal: $89.00</div>
+          <div class="field item-desc">
+            Premium silk fabric with a hand-painted floral pattern. Perfect for
+            garden parties and elegant evenings.
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Item 2 -->
+      <div class="cart-item">
+        <div class="item-left">
+          <div class="photo-box">
+            <img
+              src="https://images.unsplash.com/photo-1591033594798-33227a05780d?auto=format&fit=crop&q=80&w=200"
+              alt="Item"
+            />
+          </div>
+          <div class="quantity-controls">
+            <button class="qty-btn">-</button>
+            <span>2</span>
+            <button class="qty-btn">+</button>
+            <button class="trash-btn">🗑️</button>
+          </div>
+        </div>
+        <div class="item-right">
+          <div class="field item-name">Pastel Dream Blazer</div>
+          <div class="field">Price: $120.00</div>
+          <div class="field item-subtotal">Subtotal: $240.00</div>
+          <div class="field item-desc">
+            Tailored wool-blend blazer in soft lavender. Features silk lining
+            and polished buttons.
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Total Section -->
+      <div class="cart-summary">
+        <div class="total-display">Total: <span>$329.00</span></div>
+        <a href="/api/customer/checkout">
+          <button class="checkout-btn">Checkout</button>
+        </a>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+  </body>
+</html>

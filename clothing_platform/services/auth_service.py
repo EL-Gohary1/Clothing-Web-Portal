@@ -1,5 +1,3 @@
-from werkzeug.security import check_password_hash, generate_password_hash
-
 from models import User, UserRole, db
 
 
@@ -29,7 +27,7 @@ def register_user(payload):
     user = User(
         name=name,
         email=email,
-        password=generate_password_hash(password),
+        password=password,
         role=UserRole[role_raw],
     )
 
@@ -55,7 +53,7 @@ def login_user(payload, flask_session):
 
     user = User.query.filter_by(email=email).first()
     # SRS-FN-login-004: Invalid credentials error message
-    if not user or not check_password_hash(user.password, password):
+    if not user or not user.password == password:
         return {'error': 'Invalid email or password'}, 401
 
     flask_session['user_id'] = user.user_id

@@ -9,7 +9,7 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @dashboard_bp.get('/')
 @role_required('CUSTOMER')
 def home():
-    """Customer home page"""
+    """Customer home page - shows approved products"""
     return render_template('customer_home.html', user=g.current_user)
 
 

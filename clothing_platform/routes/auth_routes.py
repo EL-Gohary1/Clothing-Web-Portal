@@ -38,14 +38,13 @@ def logout():
     return jsonify(body), status_code
 
 
-@auth_bp.get('/me')
+@auth_bp.get('/profile')
 @login_required
-def me():
-    return jsonify({
-        'logged_in': True,
-        'user': g.current_user.to_dict(),
-        'session_role': session.get('user_role'),
-    }), 200
+def profile():
+    if status_code := 200:
+        render_template('profile.html', user=g.current_user)
+    else:
+        return render_template('error.html', message=body['message'])
 
 
 @auth_bp.get('/customer-area')
