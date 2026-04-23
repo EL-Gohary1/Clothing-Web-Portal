@@ -6,16 +6,33 @@
     <link rel="stylesheet" href="Css/Global.css" />
     <link rel="stylesheet" href="Css/cart.css" />
     <title>Your Cart | Lila Cloth</title>
-   
+    <style>
+      /* Adding a few styles for the frames since they weren't in your snippet */
+      .nav-frame {
+        width: 100%;
+        height: 85px;
+        border: none;
+      }
+      .footer-frame {
+        width: 100%;
+        height: 320px;
+        border: none;
+        margin-top: 40px;
+      }
+
+      .total-display span {
+        font-weight: bold;
+        color: var(--primary-purple, #6a1b9a);
+      }
+    </style>
   </head>
   <body>
-    <!-- NAVBAR -->
+    <!-- shared navbar -->
     <iframe src="Css/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
 
     <main class="cart-container">
       <h1>Shopping Cart</h1>
 
-      <!-- Cart Item 1 -->
       <div class="cart-item">
         <div class="item-left">
           <div class="photo-box">
@@ -25,16 +42,20 @@
             />
           </div>
           <div class="quantity-controls">
-            <button class="qty-btn">-</button>
-            <span>1</span>
-            <button class="qty-btn">+</button>
+            <button class="qty-btn minus">-</button>
+            <span class="qty-number">1</span>
+            <button class="qty-btn plus">+</button>
             <button class="trash-btn">🗑️</button>
           </div>
         </div>
         <div class="item-right">
           <div class="field item-name">Silk Floral Midi Dress</div>
-          <div class="field">Price: $89.00</div>
-          <div class="field item-subtotal">Subtotal: $89.00</div>
+          <div class="field price-box">
+            Price: $<span class="unit-price">89.00</span>
+          </div>
+          <div class="field">
+            Subtotal: $<span class="item-subtotal">89.00</span>
+          </div>
           <div class="field item-desc">
             Premium silk fabric with a hand-painted floral pattern. Perfect for
             garden parties and elegant evenings.
@@ -42,7 +63,6 @@
         </div>
       </div>
 
-      <!-- Cart Item 2 -->
       <div class="cart-item">
         <div class="item-left">
           <div class="photo-box">
@@ -52,16 +72,20 @@
             />
           </div>
           <div class="quantity-controls">
-            <button class="qty-btn">-</button>
-            <span>2</span>
-            <button class="qty-btn">+</button>
+            <button class="qty-btn minus">-</button>
+            <span class="qty-number">2</span>
+            <button class="qty-btn plus">+</button>
             <button class="trash-btn">🗑️</button>
           </div>
         </div>
         <div class="item-right">
           <div class="field item-name">Pastel Dream Blazer</div>
-          <div class="field">Price: $120.00</div>
-          <div class="field item-subtotal">Subtotal: $240.00</div>
+          <div class="field price-box">
+            Price: $<span class="unit-price">120.00</span>
+          </div>
+          <div class="field">
+            Subtotal: pound<span class="item-subtotal">240.00</span>
+          </div>
           <div class="field item-desc">
             Tailored wool-blend blazer in soft lavender. Features silk lining
             and polished buttons.
@@ -69,16 +93,66 @@
         </div>
       </div>
 
-      <!-- Bottom Total Section -->
       <div class="cart-summary">
-        <div class="total-display">Total: <span>$329.00</span></div>
+        <div class="total-display">
+          Total: pound<span id="grand-total">329.00</span>
+        </div>
         <a href="/api/customer/checkout">
           <button class="checkout-btn">Checkout</button>
         </a>
       </div>
     </main>
 
-    <!-- FOOTER -->
-    <iframe src="Css/footer.html" class="footer-frame" scrolling="no"></iframe>
+    <!-- shared FOOTER -->
+    <iframe src="footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+      function updateGrandTotal() {
+        let total = 0;
+        const subtotals = document.querySelectorAll(".item-subtotal");
+        subtotals.forEach((sub) => {
+          total += parseFloat(sub.innerText);
+        });
+        document.getElementById("grand-total").innerText = total.toFixed(2);
+      }
+
+      document.querySelectorAll(".cart-item").forEach((item) => {
+        const plusBtn = item.querySelector(".plus");
+        const minusBtn = item.querySelector(".minus");
+        const trashBtn = item.querySelector(".trash-btn");
+        const qtyDisplay = item.querySelector(".qty-number");
+        const unitPrice = parseFloat(
+          item.querySelector(".unit-price").innerText,
+        );
+        const subtotalDisplay = item.querySelector(".item-subtotal");
+
+        plusBtn.addEventListener("click", () => {
+          let qty = parseInt(qtyDisplay.innerText);
+          qty++;
+          qtyDisplay.innerText = qty;
+          subtotalDisplay.innerText = (qty * unitPrice).toFixed(2);
+          updateGrandTotal();
+        });
+
+        minusBtn.addEventListener("click", () => {
+          let qty = parseInt(qtyDisplay.innerText);
+          if (qty > 1) {
+            qty--;
+            qtyDisplay.innerText = qty;
+            subtotalDisplay.innerText = (qty * unitPrice).toFixed(2);
+            updateGrandTotal();
+          }
+        });
+
+        trashBtn.addEventListener("click", () => {
+          if (confirm("Remove this item from cart?")) {
+            item.remove();
+            updateGrandTotal();
+          }
+        });
+      });
+
+      updateGrandTotal();
+    </script>
   </body>
 </html>

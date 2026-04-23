@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../Css/Global.css" />
+    <link rel="stylesheet" href="Css/Global.css" />
 
     <title>My Orders | Lila Cloth</title>
     <style>
@@ -20,12 +20,11 @@
 
       .footer-frame {
         width: 100%;
-        height: 320px; /* Adjust based on content */
+        height: 320px;
         border: none;
         margin-top: auto;
       }
 
-      /* Orders Container */
       .main-content {
         flex: 1;
         padding: 40px 5%;
@@ -44,14 +43,12 @@
       }
 
       .orders-card h2 {
-        font-family:
-          "Segoe UI", cursive, sans-serif; /* Matching the handwritten feel of the wireframe */
+        font-family: "Segoe UI", cursive, sans-serif;
         color: var(--text-dark);
         margin-bottom: 30px;
         font-weight: 500;
       }
 
-      /* Individual Order Rows */
       .order-row {
         display: flex;
         justify-content: space-between;
@@ -71,15 +68,12 @@
       }
 
       .order-info {
-        color: var(
-          --primary-pink
-        ); /* Matching the red/pink text in the wireframe */
+        color: var(--primary-pink);
         font-size: 1.1rem;
         font-weight: 500;
         letter-spacing: 0.5px;
       }
 
-      /* Detail decoration */
       .order-info span {
         margin: 0 10px;
         color: #ddd;
@@ -108,14 +102,13 @@
     </style>
   </head>
   <body>
-    <!-- REUSABLE NAVBAR -->
-    <iframe src="../NavBar.html" class="nav-frame" scrolling="no"></iframe>
+    <!-- shared navbar -->
+    <iframe src="Css/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
 
     <main class="main-content">
       <div class="orders-card">
         <h2>Your Previous Orders</h2>
 
-        <!-- Order 1 -->
         <a href="#" class="order-row">
           <div class="order-info">
             ID: #LC-9921 <span>|</span> Price: $145.00 <span>|</span> Date: 12
@@ -123,7 +116,6 @@
           </div>
         </a>
 
-        <!-- Order 2 -->
         <a href="#" class="order-row">
           <div class="order-info">
             ID: #LC-8840 <span>|</span> Price: $89.00 <span>|</span> Date: 05
@@ -131,7 +123,6 @@
           </div>
         </a>
 
-        <!-- Order 3 -->
         <a href="#" class="order-row">
           <div class="order-info">
             ID: #LC-7712 <span>|</span> Price: $210.50 <span>|</span> Date: 20
@@ -139,7 +130,6 @@
           </div>
         </a>
 
-        <!-- Order 4 -->
         <a href="#" class="order-row">
           <div class="order-info">
             ID: #LC-6601 <span>|</span> Price: $45.00 <span>|</span> Date: 15
@@ -149,9 +139,9 @@
       </div>
     </main>
 
-    <!-- REUSABLE FOOTER -->
+    <!-- shared footer -->
     <iframe
-      src="../Footer.html"
+      src="footer.html"
       id="footer-iframe"
       class="footer-frame"
       scrolling="no"
