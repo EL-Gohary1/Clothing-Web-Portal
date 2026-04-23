@@ -16,12 +16,6 @@ def get_all_suppliers():
     return {'suppliers': [u.to_dict() for u in suppliers], 'count': len(suppliers)}, 200
 
 
-def get_user_by_id(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return {'error': 'user not found'}, 404
-    return {'user': user.to_dict()}, 200
-
 
 def add_user(payload):
     name = (payload.get('name') or '').strip()
@@ -56,8 +50,6 @@ def remove_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return {'error': 'user not found'}, 404
-
-    # Prevent deleting the last admin
     if user.role == UserRole.ADMIN:
         admin_count = User.query.filter_by(role=UserRole.ADMIN).count()
         if admin_count <= 1:
@@ -171,14 +163,8 @@ def search_products(keyword):
     return {'products': [p.to_dict() for p in products], 'count': len(products)}, 200
 
 
-
 def get_all_orders():
     orders = Order.query.order_by(Order.creation_date.desc()).all()
     return {'orders': [o.to_dict() for o in orders], 'count': len(orders)}, 200
 
 
-def get_order_by_id(order_id):
-    order = Order.query.get(order_id)
-    if not order:
-        return {'error': 'order not found'}, 404
-    return {'order': order.to_dict()}, 200

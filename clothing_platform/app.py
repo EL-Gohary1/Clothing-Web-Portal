@@ -9,6 +9,7 @@ from routes.auth_routes import auth_bp
 from routes.dashboard_routes import dashboard_bp
 from routes.customer_routes import customer_bp
 from routes.admin_routes import admin_bp
+from routes.supplier_routes import supplier_bp
 
 
 migrate = Migrate()
@@ -31,6 +32,7 @@ def create_app(config_name=None):
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(customer_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(supplier_bp)
 
     # Serve static files for iframes
     @app.route('/Css/<path:filename>')
@@ -66,7 +68,6 @@ def create_app(config_name=None):
                 'admin': [
                     'GET  /api/admin/customers',
                     'GET  /api/admin/suppliers',
-                    'GET  /api/admin/users/<id>',
                     'POST /api/admin/users',
                     'DELETE /api/admin/users/<id>',
                     'GET  /api/admin/products?status=',
@@ -76,7 +77,13 @@ def create_app(config_name=None):
                     'PATCH /api/admin/products/<id>/reject',
                     'DELETE /api/admin/products/<id>',
                     'GET  /api/admin/orders',
-                    'GET  /api/admin/orders/<id>',
+                ],
+                'supplier': [
+                    'GET  /api/supplier/products?status=',
+                    'GET  /api/supplier/products/search?keyword=',
+                    'POST /api/supplier/products',
+                    'DELETE /api/supplier/products/<id>',
+                    'GET  /api/supplier/orders',
                 ],
             },
         })

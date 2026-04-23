@@ -2,24 +2,17 @@ from flask import Blueprint, jsonify, request, g
 
 from middleware.auth_middleware import role_required
 from services.admin_service import (
-    # users
     get_all_customers,
     get_all_suppliers,
-    get_user_by_id,
     add_user,
     remove_user,
-
-    # products
     get_products,
     add_product,
     approve_product,
     reject_product,
     remove_product,
     search_products,
-
-    # orders
     get_all_orders,
-    get_order_by_id,
 )
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/api/admin')
@@ -46,13 +39,6 @@ def view_all_suppliers():
     return jsonify(body), status
 
 
-@admin_bp.get('/users/<int:user_id>')
-def view_user(user_id):
-    # GET /api/admin/users/<id> - get a user by ID
-    body, status = get_user_by_id(user_id)
-    return jsonify(body), status
-
-
 @admin_bp.post('/users')
 def create_user():
     # POST /api/admin/users - creates a user (customer or supplier)
@@ -73,12 +59,9 @@ def delete_user(user_id):
     return jsonify(body), status
 
 
-
-
 @admin_bp.get('/products')
 def view_products():
     # GET /api/admin/products?status=PENDING|APPROVED|REJECTED - list products
-
     # filter: (PENDING / APPROVED / REJECTED)
     
     status_filter = request.args.get('status')
@@ -97,7 +80,6 @@ def search():
 @admin_bp.post('/products')
 def create_product():
     # POST /api/admin/products - adds a product
-
     # Body :
     #     supplier_id    
     #     product_title  
@@ -132,16 +114,9 @@ def delete_product(product_id):
     return jsonify(body), status
 
 
-
 @admin_bp.get('/orders')
 def view_all_orders():
     #GET /api/admin/orders - list orders
     body, status = get_all_orders()
     return jsonify(body), status
 
-
-@admin_bp.get('/orders/<int:order_id>')
-def view_order(order_id):
-    #GET /api/admin/orders/<id> — get a order by id
-    body, status = get_order_by_id(order_id)
-    return jsonify(body), status
