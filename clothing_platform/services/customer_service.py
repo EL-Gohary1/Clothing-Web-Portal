@@ -107,55 +107,39 @@ def get_customer_cart(customer_id):
 
 
 def update_cart_quantity(customer_id, product_id, payload):
-    try:
         quantity = payload.get("quantity")
 
-        if quantity is None or quantity <= 0:
-            return {
-                "message": "Invalid quantity",
-                "error": "Quantity must be greater than 0",
-            }, 400
+        if not quantity or quantity <= 0:
+            return {"message": "Invalid quantity"}, 400
 
         cart = Cart.query.filter_by(customer_id=customer_id).first()
-
         if not cart:
-            return {"message": "Cart not found", "error": "Customer has no cart"}, 404
+            return {"message": "Cart not found"}, 404
 
-        # Get cart product
         cart_product = CartProduct.query.filter_by(
-            cart_id=cart.cart_id, product_id=product_id
+            cart_id=cart.cart_id,
+            product_id=product_id
         ).first()
 
         if not cart_product:
-            return {
-                "message": "Product not found in cart",
-                "error": f"Product {product_id} is not in cart",
-            }, 404
+            return {"message": "Product not in cart"}, 404
 
-        # Check stock
         product = Product.query.get(product_id)
-        if product.stock_qty < quantity:
-            return {
-                "message": "Insufficient stock",
-                "error": f"Only {product.stock_qty} items available",
-            }, 400
 
-        # Update quantity
+        if product.stock_qty < quantity:
+            return {"message": "Insufficient stock"}, 400
+
         cart_product.quantity = quantity
+
         db.session.commit()
 
         return {
-            "message": "Cart quantity updated successfully",
-            "product_id": product_id,
-            "new_quantity": quantity,
-            "cart_total": cart.calculate_total(),
+            "message": "Updated successfully",
+            "new_quantity": quantity
         }, 200
 
-    except Exception as exc:
-        db.session.rollback()
-        return {"message": "Error updating cart", "error": str(exc)}, 500
-
-
+    
+    
 def remove_from_cart(customer_id, product_id, clear_all=False):
     """Remove product from cart or clear entire cart"""
     try:
@@ -199,7 +183,6 @@ def remove_from_cart(customer_id, product_id, clear_all=False):
 def checkout(customer_id, payload):
     """Place order from cart (checkout)"""
     try:
-        # Validate required fields
         required_fields = [
             "delivery_address",
             "delivery_city",

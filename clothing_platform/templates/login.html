@@ -324,7 +324,7 @@
         <div class="login-card">
           <h2>Welcome back!</h2>
 
-          <form id="loginForm" novalidate>
+          <form id="loginForm" action="/auth/login" method="POST" novalidate>
             <div class="form-group">
               <div class="form-row">
                 <label for="email">Email</label>
@@ -361,8 +361,12 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                       <path d="M3 3l18 18"></path>
                       <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
-                      <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
-                      <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+                      <path
+                        d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"
+                      ></path>
+                      <path
+                        d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"
+                      ></path>
                     </svg>
                   </button>
                 </div>
@@ -375,7 +379,7 @@
               <a href="register.html">Sign up here</a>
             </p>
 
-            <p id="loginError" class="error-message"></p>
+            <div id="loginError" class="error-message">{{ server_error or '' }}</div>
 
             <div class="submit-wrapper">
               <button type="submit" class="submit-btn">submit</button>
@@ -480,75 +484,48 @@
         loginError.textContent = "";
       }
 
-      const defaultUsers = [
-        {
-          email: "customer@gmail.com",
-          password: "123456",
-          role: "customer",
-        },
-        {
-          email: "supplier@gmail.com",
-          password: "123456",
-          role: "supplier",
-        },
-        {
-          email: "admin@gmail.com",
-          password: "123456",
-          role: "admin",
-        },
-      ];
-
-      if (!localStorage.getItem("users")) {
-        localStorage.setItem("users", JSON.stringify(defaultUsers));
-      }
-
-      loginForm.addEventListener("submit", function (e) {
+      loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        clearAllErrors();
+        loginError.textContent = "";
 
         const email = emailInput.value.trim().toLowerCase();
         const password = passwordInput.value.trim();
-        let isValid = true;
 
-        if (email === "") {
-          setError(emailInput, "emailError", "Email required");
-          isValid = false;
-        }
+        const formData = {
+          email: email,
+          password: password,
+        };
 
-        if (password === "") {
-          setError(passwordInput, "passwordError", "Password required");
-          isValid = false;
-        }
+        try {
+          const response = await fetch("/auth/login", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
 
-        if (!isValid) {
-          return;
-        }
+          const data = await response.json();
 
-        const users = JSON.parse(localStorage.getItem("users")) || [];
+          if (response.ok) {
+            const role = data.role || (data.user && data.user.role);
 
-        const foundUser = users.find(function (user) {
-          return (
-            user.email.toLowerCase() === email &&
-            user.password === password
-          );
-        });
-
-        if (!foundUser) {
-          loginError.textContent = "Invalid Email/Password";
-          emailInput.classList.add("input-error");
-          passwordInput.classList.add("input-error");
-          return;
-        }
-
-        localStorage.setItem("currentUser", JSON.stringify(foundUser));
-
-        if (foundUser.role === "customer") {
-          window.location.href = "customer-home.html";
-        } else if (foundUser.role === "supplier") {
-          window.location.href = "supplier-home.html";
-        } else if (foundUser.role === "admin") {
-          window.location.href = "admin-home.html";
+            if (role === "CUSTOMER") {
+              window.location.href = "/customer/";
+            } else if (role === "ADMIN") {
+              window.location.href = "/admin-dashboard/customers";
+            } else if (role === "SUPPLIER") {
+              window.location.href = "/api/supplier/products";
+            } else {
+              window.location.href = "/api";
+            }
+          } else {
+            loginError.textContent = data.error || "Login failed";
+          }
+        } catch (error) {
+          loginError.textContent = "Server error";
         }
       });
     </script>

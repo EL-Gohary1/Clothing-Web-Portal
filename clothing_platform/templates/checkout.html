@@ -3,20 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="Css/checkout.css" />
-    <link rel="stylesheet" href="Css/Global.css" />
+    <link rel="stylesheet" href="/static/checkout.css" />
+    <link rel="stylesheet" href="/static/Global.css" />
     <title>Checkout | Lila Cloth</title>
   </head>
   <body>
     <!-- shared NAVBAR -->
-    <iframe src="Css/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
+    <iframe
+      src="/static/nav-bar.html"
+      class="nav-frame"
+      scrolling="no"
+    ></iframe>
 
     <main class="main-content">
       <div class="checkout-outer-card">
         <h1 class="checkout-header">Checkout Page</h1>
-        <form method="POST" action="/api/customer/checkout">
+        <form method="POST" action="/customer/checkout">
           <div class="checkout-inner-box">
-            <!-- Receiver Name -->
             <div class="form-group">
               <label for="name">receiver name</label>
               <input
@@ -64,6 +67,19 @@
               />
             </div>
 
+            <!-- Email (required for checkout) -->
+            <div class="form-group">
+              <label for="email">email</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="name@example.com"
+                name="email"
+                value="{{ user.email if user and user.email else '' }}"
+                required
+              />
+            </div>
+
             <!-- Payment Method  -->
             <div class="payment-bar">
               Payment Method: <strong>cash-on-delivery</strong>
@@ -71,8 +87,8 @@
 
             <!-- Buttons -->
             <div class="action-footer">
-              <a href="/api/customer/cart" class="back-link"
-                >Back to cart page</a
+              <a class="back-link" onclick="returnIntoCart()">
+                Back to cart page</a
               >
               <button type="submit" class="confirm-btn">confirm order</button>
             </div>
@@ -83,10 +99,17 @@
 
     <!-- shared FOOTER -->
     <iframe
-      src="Css/footer.html"
+      src="/static/footer.html"
       id="footer-iframe"
       class="footer-frame"
       scrolling="no"
     ></iframe>
+
+    <script>
+      cart = {{ cart | tojson }}
+      function returnIntoCart() {
+        window.location.href = "/customer/cart";
+      }
+    </script>
   </body>
 </html>

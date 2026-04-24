@@ -420,7 +420,7 @@
 
       <section class="register-wrapper">
         <div class="register-card">
-          <form id="registerForm" novalidate>
+          <form id="registerForm" method = "Post" novalidate>
             <div class="form-group">
               <div class="form-row">
                 <label for="username">Username</label>
@@ -430,6 +430,7 @@
                   name="username"
                   class="username-input"
                   placeholder="Enter your username"
+                  required
                 />
               </div>
               <p id="usernameError" class="field-error"></p>
@@ -444,6 +445,7 @@
                   name="email"
                   class="email-input"
                   placeholder="Enter your email"
+                  required
                 />
               </div>
               <p id="emailError" class="field-error"></p>
@@ -459,6 +461,7 @@
                     name="password"
                     class="password-input"
                     placeholder="Enter your password"
+                    required
                   />
                   <button
                     type="button"
@@ -469,8 +472,12 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                       <path d="M3 3l18 18"></path>
                       <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
-                      <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
-                      <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+                      <path
+                        d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"
+                      ></path>
+                      <path
+                        d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"
+                      ></path>
                     </svg>
                   </button>
                 </div>
@@ -488,6 +495,7 @@
                     name="confirmPassword"
                     class="confirm-password-input"
                     placeholder="Confirm your password"
+                    required
                   />
                   <button
                     type="button"
@@ -498,8 +506,12 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                       <path d="M3 3l18 18"></path>
                       <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
-                      <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
-                      <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+                      <path
+                        d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"
+                      ></path>
+                      <path
+                        d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"
+                      ></path>
                     </svg>
                   </button>
                 </div>
@@ -527,14 +539,14 @@
 
             <p class="login-text">
               Do you have account ?
-              <a href="login.html">Login</a>
+              <a onclick="window.location.href = '/auth/login'">Login</a>
             </p>
-
 
             <div class="submit-wrapper">
               <button type="submit" class="submit-btn">submit</button>
             </div>
           </form>
+          <div id="message" class="message"></div>
         </div>
       </section>
     </main>
@@ -584,15 +596,15 @@
         &copy; 2024 Lila Cloth. All Rights Reserved .
       </div>
     </footer>
-<script>
-  const eyeOpenIcon = `
+    <script>
+      const eyeOpenIcon = `
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
       <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
       <circle cx="12" cy="12" r="3"></circle>
     </svg>
   `;
 
-  const eyeOffIcon = `
+      const eyeOffIcon = `
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
       <path d="M3 3l18 18"></path>
       <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
@@ -600,180 +612,206 @@
       <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
     </svg>
   `;
+      const messageDiv = document.getElementById("message");
 
-  const usernameInput = document.getElementById("username");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-  const confirmPasswordInput = document.getElementById("confirmPassword");
-  const registerForm = document.getElementById("registerForm");
+      const usernameInput = document.getElementById("username");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const confirmPasswordInput = document.getElementById("confirmPassword");
+      const registerForm = document.getElementById("registerForm");
 
-  function togglePassword(inputId, button) {
-    const input = document.getElementById(inputId);
+      function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
 
-    if (input.type === "password") {
-      input.type = "text";
-      button.innerHTML = eyeOpenIcon;
-    } else {
-      input.type = "password";
-      button.innerHTML = eyeOffIcon;
-    }
-  }
+        if (input.type === "password") {
+          input.type = "text";
+          button.innerHTML = eyeOpenIcon;
+        } else {
+          input.type = "password";
+          button.innerHTML = eyeOffIcon;
+        }
+      }
 
-  function setError(input, errorId, message) {
-    document.getElementById(errorId).textContent = message;
-    if (input) {
-      input.classList.add("input-error");
-    }
-  }
+      function setError(input, errorId, message) {
+        document.getElementById(errorId).textContent = message;
+        if (input) {
+          input.classList.add("input-error");
+        }
+      }
 
-  function clearError(input, errorId) {
-    document.getElementById(errorId).textContent = "";
-    if (input) {
-      input.classList.remove("input-error");
-    }
-  }
+      function clearError(input, errorId) {
+        document.getElementById(errorId).textContent = "";
+        if (input) {
+          input.classList.remove("input-error");
+        }
+      }
 
-  function clearAllErrors() {
-    clearError(usernameInput, "usernameError");
-    clearError(emailInput, "emailError");
-    clearError(passwordInput, "passwordError");
-    clearError(confirmPasswordInput, "confirmPasswordError");
-    document.getElementById("roleError").textContent = "";
-  }
+      function clearAllErrors() {
+        clearError(usernameInput, "usernameError");
+        clearError(emailInput, "emailError");
+        clearError(passwordInput, "passwordError");
+        clearError(confirmPasswordInput, "confirmPasswordError");
+        document.getElementById("roleError").textContent = "";
+      }
 
-  function validateUsername() {
-    const username = usernameInput.value.trim();
+      function validateUsername() {
+        const username = usernameInput.value.trim();
 
-    if (username === "") {
-      setError(usernameInput, "usernameError", "Required fields missing");
-      return false;
-    }
+        if (username === "") {
+          setError(usernameInput, "usernameError", "Required fields missing");
+          return false;
+        }
 
-    if (username.length < 3 || username.length > 50) {
-      setError(usernameInput, "usernameError", "Username must be 3-50 characters");
-      return false;
-    }
+        if (username.length < 3 || username.length > 50) {
+          setError(
+            usernameInput,
+            "usernameError",
+            "Username must be 3-50 characters",
+          );
+          return false;
+        }
 
-    clearError(usernameInput, "usernameError");
-    return true;
-  }
+        clearError(usernameInput, "usernameError");
+        return true;
+      }
 
-  function validateEmail() {
-    const email = emailInput.value.trim().toLowerCase();
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      function validateEmail() {
+        const email = emailInput.value.trim().toLowerCase();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (email === "") {
-      setError(emailInput, "emailError", "Required fields missing");
-      return false;
-    }
+        if (email === "") {
+          setError(emailInput, "emailError", "Required fields missing");
+          return false;
+        }
 
-    if (!emailPattern.test(email)) {
-      setError(emailInput, "emailError", "Invalid Email format.");
-      return false;
-    }
+        if (!emailPattern.test(email)) {
+          setError(emailInput, "emailError", "Invalid Email format.");
+          return false;
+        }
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const emailExists = users.some(function (user) {
-      return user.email.toLowerCase() === email;
-    });
+        clearError(emailInput, "emailError");
+        return true;
+      }
 
-    if (emailExists) {
-      setError(emailInput, "emailError", "Email already exists");
-      return false;
-    }
+      function validatePassword() {
+        const password = passwordInput.value.trim();
 
-    clearError(emailInput, "emailError");
-    return true;
-  }
+        if (password === "") {
+          setError(passwordInput, "passwordError", "Required fields missing");
+          return false;
+        }
 
-  function validatePassword() {
-    const password = passwordInput.value.trim();
+        if (password.length < 8 || password.length > 64) {
+          setError(
+            passwordInput,
+            "passwordError",
+            "Password must be 8-64 characters",
+          );
+          return false;
+        }
 
-    if (password === "") {
-      setError(passwordInput, "passwordError", "Required fields missing");
-      return false;
-    }
+        clearError(passwordInput, "passwordError");
+        return true;
+      }
 
-    if (password.length < 8 || password.length > 64) {
-      setError(passwordInput, "passwordError", "Password must be 8-64 characters");
-      return false;
-    }
+      function validateConfirmPassword() {
+        const password = passwordInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value.trim();
 
-    clearError(passwordInput, "passwordError");
-    return true;
-  }
+        if (confirmPassword === "") {
+          setError(
+            confirmPasswordInput,
+            "confirmPasswordError",
+            "Required fields missing",
+          );
+          return false;
+        }
 
-  function validateConfirmPassword() {
-    const password = passwordInput.value.trim();
-    const confirmPassword = confirmPasswordInput.value.trim();
+        if (password !== confirmPassword) {
+          setError(
+            confirmPasswordInput,
+            "confirmPasswordError",
+            "Password and Confirm Password do not match",
+          );
+          return false;
+        }
 
-    if (confirmPassword === "") {
-      setError(confirmPasswordInput, "confirmPasswordError", "Required fields missing");
-      return false;
-    }
+        clearError(confirmPasswordInput, "confirmPasswordError");
+        return true;
+      }
 
-    if (password !== confirmPassword) {
-      setError(
-        confirmPasswordInput,
-        "confirmPasswordError",
-        "Password and Confirm Password do not match"
-      );
-      return false;
-    }
+      function validateRole() {
+        const selectedRole = document.querySelector(
+          'input[name="role"]:checked',
+        );
 
-    clearError(confirmPasswordInput, "confirmPasswordError");
-    return true;
-  }
+        if (!selectedRole) {
+          document.getElementById("roleError").textContent =
+            "Please select a role";
+          return false;
+        }
 
-  function validateRole() {
-    const selectedRole = document.querySelector('input[name="role"]:checked');
+        document.getElementById("roleError").textContent = "";
+        return true;
+      }
 
-    if (!selectedRole) {
-      document.getElementById("roleError").textContent = "Please select a role";
-      return false;
-    }
+      registerForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-    document.getElementById("roleError").textContent = "";
-    return true;
-  }
+        clearAllErrors();
 
-  registerForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+        const isUsernameValid = validateUsername();
+        const isEmailValid = validateEmail();
+        const isPasswordValid = validatePassword();
+        const isConfirmPasswordValid = validateConfirmPassword();
+        const isRoleValid = validateRole();
 
-    clearAllErrors();
+        if (
+          !isUsernameValid ||
+          !isEmailValid ||
+          !isPasswordValid ||
+          !isConfirmPasswordValid ||
+          !isRoleValid
+        ) {
+          return;
+        }
 
-    const isUsernameValid = validateUsername();
-    const isEmailValid = validateEmail();
-    const isPasswordValid = validatePassword();
-    const isConfirmPasswordValid = validateConfirmPassword();
-    const isRoleValid = validateRole();
+        const newUser = {
+          name: usernameInput.value.trim(), // 🔥 adjust to backend
+          email: emailInput.value.trim().toLowerCase(),
+          password: passwordInput.value.trim(),
+          role: document
+            .querySelector('input[name="role"]:checked')
+            .value.toUpperCase(),
+        };
 
-    if (
-      !isUsernameValid ||
-      !isEmailValid ||
-      !isPasswordValid ||
-      !isConfirmPasswordValid ||
-      !isRoleValid
-    ) {
-      return;
-    }
+        try {
+          const response = await fetch("/auth/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newUser),
+          });
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+          const data = await response.json();
 
-    const newUser = {
-      username: usernameInput.value.trim(),
-      email: emailInput.value.trim().toLowerCase(),
-      password: passwordInput.value.trim(),
-      role: document.querySelector('input[name="role"]:checked').value,
-    };
+          if (response.ok) {
+            messageDiv.className = "message success-message";
+            messageDiv.textContent = "Registration successful! Redirecting...";
 
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
-
-    registerForm.reset();
-    window.location.href = "login.html";
-  });
-</script>
- 
+            setTimeout(() => {
+              window.location.href = "/auth/login";
+            }, 1000);
+          } else {
+            messageDiv.className = "message error-message";
+            messageDiv.textContent = data.error || "Registration failed";
+          }
+        } catch (error) {
+          messageDiv.className = "message error-message";
+          messageDiv.textContent = "Server error";
+        }
+      });
+    </script>
   </body>
 </html>

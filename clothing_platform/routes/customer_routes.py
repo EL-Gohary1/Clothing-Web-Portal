@@ -1,4 +1,4 @@
-from flask import Blueprint, g, jsonify, render_template, request
+from flask import Blueprint, g, jsonify, redirect, render_template, request
 from middleware.auth_middleware import login_required, role_required
 from services.customer_service import (
     get_approved_products,
@@ -9,7 +9,7 @@ from services.customer_service import (
     checkout,
 )
 
-customer_bp = Blueprint("customer", __name__, url_prefix="/api/customer")
+customer_bp = Blueprint("customer", __name__, url_prefix="/customer")
 
 
 @customer_bp.get("/")
@@ -18,7 +18,7 @@ def products_page():
     body, status_code = get_approved_products()
     if status_code == 200:
         return render_template(
-            "customer_home.html", products=body["products"], user=g.current_user
+            "index.html", products=body["products"], user=g.current_user
         )
     else:
         return render_template("error.html", message=body["message"])
@@ -37,7 +37,6 @@ def add_product_to_cart():
 @customer_bp.get("/cart")
 @role_required("CUSTOMER")
 def view_cart():
-    """Get customer's cart and render cart page"""
     body, status_code = get_customer_cart(g.current_user.user_id)
     if status_code == 200:
         cart_data = body.get("cart")
@@ -46,7 +45,8 @@ def view_cart():
                 "cart-page.html", cart=cart_data, user=g.current_user
             )
         else:
-            return render_template("cart-page.html", cart=None, user=g.current_user)
+            # return render_template("cart-page.html", cart=None, user=g.current_user)
+            return render_template("cart-page.html", cart=[], user=g.current_user)
     else:
         return render_template("error.html", message=body["message"])
 
@@ -92,25 +92,13 @@ def checkout_page():
 @customer_bp.post("/checkout")
 @role_required("CUSTOMER")
 def place_order():
-    """Process checkout form submission"""
-    # Get form data (not JSON)
-    payload = {
-        "delivery_address": request.form.get("delivery_address"),
-        "delivery_city": request.form.get("delivery_city"),
-        "receiver_name": request.form.get("receiver_name"),
-        "receiver_phone": request.form.get("receiver_phone"),
-        "email": request.form.get("email"),
-        "payment_method": request.form.get("payment_method"),
-        "postal_code": request.form.get("postal_code"),
-        "delivery_notes": request.form.get("delivery_notes"),
-    }
-
+    payload = request.get_json(silent=True)
+    if payload is None:
+        payload = request.form.to_dict(flat=True)
     body, status_code = checkout(g.current_user.user_id, payload)
 
     if status_code == 201:  # Order created successfully
-        return render_template(
-            "OrderConfirmation.html", order=body["order"], user=g.current_user
-        )
+        return redirect("/customer/orders")
     else:
         return render_template("error.html", message=body["message"])
 
@@ -121,14 +109,10 @@ def get_customer_orders():
     from services.customer_service import get_customer_order_history
 
     body, status_code = get_customer_order_history(g.current_user.user_id)
-    return jsonify(body), status_code
+    if status_code == 200: 
+        return render_template("order-page.html", orders=body.get("orders", []), user=g.current_user)
+    else:
+        return render_template("error.html", message=body["message"])
 
 
-@customer_bp.get("/orders/<int:order_id>")
-@role_required("CUSTOMER")
-def get_order_details(order_id):
-    """Get specific order details"""
-    from services.customer_service import get_order_details as service_get_order_details
 
-    body, status_code = service_get_order_details(g.current_user.user_id, order_id)
-    return jsonify(body), status_code

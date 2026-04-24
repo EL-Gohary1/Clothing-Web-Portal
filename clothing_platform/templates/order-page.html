@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="Css/Global.css" />
+    <link rel="stylesheet" href="/static/Global.css" />
 
     <title>My Orders | Lila Cloth</title>
     <style>
@@ -103,45 +103,32 @@
   </head>
   <body>
     <!-- shared navbar -->
-    <iframe src="Css/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
+    <iframe src="/static/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
 
     <main class="main-content">
       <div class="orders-card">
         <h2>Your Previous Orders</h2>
-
-        <a href="#" class="order-row">
-          <div class="order-info">
-            ID: #LC-9921 <span>|</span> Price: $145.00 <span>|</span> Date: 12
-            Oct 2024
-          </div>
-        </a>
-
-        <a href="#" class="order-row">
-          <div class="order-info">
-            ID: #LC-8840 <span>|</span> Price: $89.00 <span>|</span> Date: 05
-            Sep 2024
-          </div>
-        </a>
-
-        <a href="#" class="order-row">
-          <div class="order-info">
-            ID: #LC-7712 <span>|</span> Price: $210.50 <span>|</span> Date: 20
-            Aug 2024
-          </div>
-        </a>
-
-        <a href="#" class="order-row">
-          <div class="order-info">
-            ID: #LC-6601 <span>|</span> Price: $45.00 <span>|</span> Date: 15
-            July 2024
-          </div>
-        </a>
+        {% if orders and orders|length > 0 %}
+          {% for order in orders %}
+            <a href="#" class="order-row">
+              <div class="order-info">
+                ID: #LC-{{ order.order_id }}
+                <span>|</span>
+                Price: {{ "%.2f"|format(order.total_price or 0) }}
+                <span>|</span>
+                Date: {{ (order.creation_date or "")[:10] }}
+              </div>
+            </a>
+          {% endfor %}
+        {% else %}
+          <div class="order-info">No orders yet.</div>
+        {% endif %}
       </div>
     </main>
 
     <!-- shared footer -->
     <iframe
-      src="footer.html"
+      src="/static/footer.html"
       id="footer-iframe"
       class="footer-frame"
       scrolling="no"

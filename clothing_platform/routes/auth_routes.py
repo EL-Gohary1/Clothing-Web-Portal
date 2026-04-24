@@ -1,9 +1,9 @@
-from flask import Blueprint, g, jsonify, request, session, render_template
+from flask import Blueprint, g, jsonify, redirect, request, session, render_template
 from middleware.auth_middleware import login_required, role_required
 from services.auth_service import login_user, logout_user, register_user
 
 
-auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
+auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @auth_bp.get("/register")
@@ -25,9 +25,29 @@ def register():
 
 @auth_bp.post("/login")
 def login():
-    payload = request.get_json(silent=True) or {}
+    # Support both JSON (fetch/AJAX) and regular HTML form submits.
+    if request.is_json:
+        payload = request.get_json(silent=True) or {}
+        body, status_code = login_user(payload, session)
+        return jsonify(body), status_code
+
+    payload = request.form.to_dict(flat=True) or {}
     body, status_code = login_user(payload, session)
-    return jsonify(body), status_code
+
+    if status_code == 200:
+        role = body.get("role") or (body.get("user") or {}).get("role")
+
+        if role == "CUSTOMER":
+            return redirect("/customer/")
+        if role == "ADMIN":
+            return redirect("/admin-dashboard/customers")
+        if role == "SUPPLIER":
+            # Supplier endpoints are JSON-only in this app.
+            return redirect("/supplier-dashboard/products")
+
+        return redirect("/api")
+
+    return render_template("login.html", server_error=body.get("error")), status_code
 
 
 @auth_bp.post("/logout")

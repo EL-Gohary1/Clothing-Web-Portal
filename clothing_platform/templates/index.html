@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="Css/Global.css" />
+    <link rel="stylesheet" href="/static/Global.css" />
 
     <title>Lila Cloth</title>
     <style>
@@ -174,11 +174,8 @@
         padding: 12px;
         border: none;
         border-radius: 12px;
-        background: linear-gradient(
-          to right,
-          var(--primary-pink),
-          var(--primary-purple)
-        );
+                background: linear-gradient(135deg, #ff8eb2, #c29fff);
+
         color: white;
         font-weight: 600;
         text-transform: uppercase;
@@ -208,7 +205,7 @@
   </head>
   <body>
     <!-- shared navbar -->
-    <iframe src="Css/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
+    <iframe src="/static/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
 
     <main>
       <div class="search-container">
@@ -222,7 +219,7 @@
       </div>
 
       <section class="product-grid" id="productGrid">
-        <div class="card">
+       <!---<div class="card">
           <div class="photo-area">
             <img src="Image/stripped pullover.jfif" alt="Dress" />
           </div>
@@ -241,73 +238,62 @@
               <span class="qty-val">1</span>
               <button class="qty-btn plus">+</button>
             </div>
-            <button class="add-to-cart">Add to Cart</button>
+            <button onclick="addToCart(${product.product_id})">Add to Cart</button>
           </div>
-        </div>
+        </div> -->
 
-        <div class="card">
-          <div class="photo-area">
-            <img
-              src="https://images.unsplash.com/photo-1591033594798-33227a05780d?auto=format&fit=crop&q=80&w=400"
-              alt="Blazer"
-            />
-          </div>
-          <div class="card-details">
-            <div class="name">Cloud Dream Blazer</div>
-            <div class="desc">
-              Tailored fit blazer in soft lavender wool blend.
-            </div>
-            <div class="price">$120.00</div>
-            <div class="info-row">
-              <span>Stock: 12 items</span>
-            </div>
-            <div class="info-row">
-              <span>Supplier: Lila Luxe</span>
-            </div>
-            <div class="quantity-selector">
-              <button class="qty-btn minus">-</button>
-              <span class="qty-val">1</span>
-              <button class="qty-btn plus">+</button>
-            </div>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="photo-area">
-            <img
-              src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=400"
-              alt="Knitwear"
-            />
-          </div>
-          <div class="card-details">
-            <div class="name">Cloud Soft Sweater</div>
-            <div class="desc">
-              Ultra-soft mohair knit perfect for cozy evenings.
-            </div>
-            <div class="price">$65.00</div>
-            <div class="info-row">
-              <span>Stock: 12 items</span>
-            </div>
-            <div class="info-row">
-              <span>Supplier: Lila Luxe</span>
-            </div>
-            <div class="quantity-selector">
-              <button class="qty-btn minus">-</button>
-              <span class="qty-val">1</span>
-              <button class="qty-btn plus">+</button>
-            </div>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
-        </div>
       </section>
     </main>
 
     <!-- shared footer -->
-    <iframe src="footer.html" class="footer-frame" scrolling="no"></iframe>
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
-      const USER_LOGGED_IN = false;
+      products = {{ products|tojson }};
+      
+      function renderProducts() {
+          const container = document.getElementById("productGrid");
+
+          if (!products || products.length === 0) {
+              container.innerHTML = "<p>No products available</p>";
+              return;
+          }
+
+          container.innerHTML = products.map(product => `
+              <div class="card">
+                  <div class="photo-area">
+                      <img src="/static/images/${product.photo}" alt="${product.product_title}" />
+                  </div>
+
+                  <div class="card-details">
+                      <div class="name">${product.product_title}</div>
+
+                      <div class="desc">${product.description}</div>
+                      <div style="font-size: 12px;"> Availability: <strong>${product.stock_status}</strong></div>
+
+                      <div class="price">${product.unit_price} EGP</div>
+
+                      <div class="info-row">
+                          <span>Stock: ${product.stock_qty} items</span>
+                      </div>
+
+                      <div class="info-row">
+                          <span>Supplier: ${product.supplier_name || product.supplier_id}</span>
+                      </div>
+
+                      <div class="quantity-selector">
+                          <button class="qty-btn" onclick="decreaseQty(${product.product_id})">-</button>
+                          <span class="qty-val" id="qty-${product.product_id}">1</span>
+                          <button class="qty-btn" onclick="increaseQty(${product.product_id}, ${product.stock_qty})">+</button>
+                      </div>
+
+                      <button class="add-to-cart" onclick="addToCart(${product.product_id})">
+                          Add to Cart
+                      </button>
+                  </div>
+              </div>
+          `).join('');
+      }
 
       const searchInput = document.getElementById("searchInput");
       const searchBtn = document.getElementById("searchBtn");
@@ -333,35 +319,62 @@
         if (e.key === "Enter") performSearch();
       });
 
-      document.querySelectorAll(".card").forEach((card) => {
-        const plusBtn = card.querySelector(".plus");
-        const minusBtn = card.querySelector(".minus");
-        const qtyDisplay = card.querySelector(".qty-val");
-        const addBtn = card.querySelector(".add-to-cart");
-        const productName = card.querySelector(".name").innerText;
 
-        plusBtn.addEventListener("click", () => {
-          let currentQty = parseInt(qtyDisplay.innerText);
-          qtyDisplay.innerText = currentQty + 1;
-        });
+      async function addToCart(productId) {
+          const qtyEl = document.getElementById(`qty-${productId}`);
+          const quantity = parseInt(qtyEl.innerText);
 
-        minusBtn.addEventListener("click", () => {
-          let currentQty = parseInt(qtyDisplay.innerText);
-          if (currentQty > 1) {
-            qtyDisplay.innerText = currentQty - 1;
+          try {
+              const response = await fetch("/customer/cart", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                      product_id: productId,
+                      quantity: quantity
+                  })
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                  alert(data.message || "Failed to add to cart");
+                  return;
+              }
+
+              alert("Added to cart");
+
+          } catch (error) {
+              console.error(error);
+              alert("Server error");
           }
-        });
+      }
+      function increaseQty(id, max) {
+        const el = document.getElementById(`qty-${id}`);
+        let value = parseInt(el.innerText);
 
-        addBtn.addEventListener("click", () => {
-          if (!USER_LOGGED_IN) {
-            alert("Please log in first to add items to your cart.");
-          } else {
-            alert(
-              `Success! Added ${qtyDisplay.innerText} unit(s) of "${productName}" to your cart.`,
-            );
+            if (value < max) {
+              el.innerText = value + 1;
+            }
+            else {
+              alert("Maximum stock reached");
+           }
+     }
+
+      function decreaseQty(id) {
+          const el = document.getElementById(`qty-${id}`);
+          let value = parseInt(el.innerText);
+
+          if (value > 1) {
+              el.innerText = value - 1;
           }
-        });
-      });
+      }
+
+        
+        
+        renderProducts();
+
     </script>
   </body>
 </html>

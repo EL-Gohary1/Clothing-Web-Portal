@@ -11,16 +11,16 @@
     {% if user %}
         <ul class="nav-links">
           <li>
-            <a href="/api/auth/logout">Logout</a>
+            <a href="/auth/logout">Logout</a>
           </li>
           <li>
-            <a href="/api/customer/orders">Orders</a>
+            <a href="/customer/orders">Orders</a>
           </li>
           <li>
-            <a href="/api/customer/cart">Cart</a>
+            <a href="/customer/cart">Cart</a>
           </li>
           <li>
-            <a href="/api/customer/products">Home</a>
+            <a href="/customer/products">Home</a>
           </li>
         </ul>
       
@@ -28,10 +28,10 @@
     {% else %}
     <ul class="nav-links">
         <li>
-          <a href="/api/auth/register" target="_parent" class="register-btn">register</a>
+          <a href="/auth/register" target="_parent" class="register-btn">register</a>
         </li>
         <li>
-          <a href="/api/auth/login" target="_parent" class="login-btn">login</a>
+          <a href="/auth/login" target="_parent" class="login-btn">login</a>
         </li>
       </ul>
       {% endif %}

@@ -562,7 +562,7 @@
             }
 
             container.innerHTML = filtered.map(product => `
-                <div class="product-item" data-id="${product.Id}">
+                <div class="product-item" data-id="${product.product_id}">
                     <div class="product-photo">
                         <img src="/static/images/${product.photo}" alt="${product.product_title}">
                     </div>
@@ -573,32 +573,83 @@
                         <div class="product-details">
                             <strong>Name:</strong> ${product.product_title}<br>
                             <strong>Description:</strong> ${product.description}<br>
-                            <strong>Price:</strong> ${product.unit_price}<br>
+                            <strong>Price:</strong> ${product.unit_price} EGP<br>
                             <strong>Quantity:</strong> ${product.stock_qty}<br>
                             <strong>Supplier:</strong> ${product.supplier_id}
                         </div>
                     </div>
 
                     <div class="product-right">
-                        <span class="status-badge">
+                        <span class="status-badge ${product.product_status === 'APPROVED' ? 'status-approved' : 'status-pending'}">
                             ${product.product_status}
                         </span>
+                        <div class="action-buttons">
+                            ${product.product_status === 'PENDING' ? `
+                                <button class="approve-btn" onclick="approveProduct(${product.product_id})">Approve</button>
+                                <button class="reject-btn" onclick="rejectProduct(${product.product_id})">Reject</button>
+                            ` : ''}
+                            <button class="delete-icon" onclick="deleteProduct(${product.product_id})">🗑️</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function approveProduct(id) {
-            const product = products.find(p => p.Id === id);
-            if (product) {
-                product.product_status = "APPROVED";
+        async function approveProduct(id) {
+            try {
+                const response = await fetch(`/admin-dashboard/products/${id}/approve`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert(err.message || "Failed to approve product");
+                    return;
+                }
+
+                const product = products.find(p => p.product_id === id);
+                if (product) {
+                    product.product_status = "APPROVED";
+                }
+
                 renderProducts();
+
+            } catch (error) {
+                console.error(error);
+                alert("Server error while approving product");
             }
         }
 
-        function rejectProduct(id) {
-            products = products.filter(p => p.Id !== id);
-            renderProducts();
+        async function rejectProduct(id) {
+            try {
+                const response = await fetch(`/admin-dashboard/products/${id}/reject`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert(err.message || "Failed to reject product");
+                    return;
+                }
+
+                // update UI locally
+                const product = products.find(p => p.product_id === id);
+                if (product) {
+                    product.product_status = "REJECTED";
+                }
+
+                renderProducts();
+
+            } catch (error) {
+                console.error(error);
+                alert("Server error while rejecting product");
+            }
         }
 
         async function deleteProduct(id) {
@@ -616,7 +667,7 @@
                     return;
                 }
 
-                products = products.filter(p => p.Id !== id);
+                products = products.filter(p => p.product_id !== id);
 
                 renderProducts();
 
