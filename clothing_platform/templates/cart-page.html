@@ -38,7 +38,7 @@
 
     <script>
       let cart = {{ cart | tojson }};
-
+      console.log("Cart Data:", cart);
       function renderCartItems() {
         const container = document.getElementById("cart-items-wrapper");
 
@@ -70,7 +70,7 @@
                         ${item.product_title}
                     </div>
 
-                    <div class="field">
+                    <div class="field price-box">
                         Price: <span id="price-${item.product_id}">${item.unit_price.toFixed(2)}</span> EGP
                     </div>
 

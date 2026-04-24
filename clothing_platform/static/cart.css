@@ -16,7 +16,7 @@
   margin-top: auto;
 }
 
-.cart-container {
+.cart-container, .cart-items-wrapper {
   flex: 1;
   max-width: 900px;
   margin: 40px auto;
