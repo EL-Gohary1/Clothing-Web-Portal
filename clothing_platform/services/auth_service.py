@@ -2,27 +2,27 @@ from models import User, UserRole, db
 
 
 def _normalize_email(email):
-    return (email or '').strip().lower()
+    return (email or "").strip().lower()
 
 
 def register_user(payload):
-    name = (payload.get('name') or '').strip()
-    email = _normalize_email(payload.get('email'))
-    password = payload.get('password') or ''
-    role_raw = (payload.get('role') or 'CUSTOMER').strip().upper()
+    name = (payload.get("name") or "").strip()
+    email = _normalize_email(payload.get("email"))
+    password = payload.get("password") or ""
+    role_raw = (payload.get("role") or "CUSTOMER").strip().upper()
 
     if not name or not email or not password:
-        return {'error': 'name, email and password are required'}, 400
+        return {"error": "name, email and password are required"}, 400
 
     if len(password) < 6:
-        return {'error': 'password must be at least 6 characters'}, 400
+        return {"error": "password must be at least 6 characters"}, 400
 
     if role_raw not in UserRole.__members__:
         allowed = [role.value for role in UserRole]
-        return {'error': f'invalid role. allowed roles: {allowed}'}, 400
+        return {"error": f"invalid role. allowed roles: {allowed}"}, 400
 
     if User.query.filter_by(email=email).first():
-        return {'error': 'email already registered'}, 409
+        return {"error": "email already registered"}, 409
 
     user = User(
         name=name,
@@ -35,37 +35,37 @@ def register_user(payload):
     db.session.commit()
 
     return {
-        'message': 'registration successful',
-        'user': user.to_dict(),
+        "message": "registration successful",
+        "user": user.to_dict(),
     }, 201
 
 
 def login_user(payload, flask_session):
-    email = _normalize_email(payload.get('email'))
-    password = payload.get('password') or ''
+    email = _normalize_email(payload.get("email"))
+    password = payload.get("password") or ""
 
     # SRS-FN-login-004: Validate empty fields with specific messages
     if not email:
-        return {'error': 'Email is Required'}, 400
-    
+        return {"error": "Email is Required"}, 400
+
     if not password:
-        return {'error': 'Password is Required'}, 400
+        return {"error": "Password is Required"}, 400
 
     user = User.query.filter_by(email=email).first()
     # SRS-FN-login-004: Invalid credentials error message
     if not user or not user.password == password:
-        return {'error': 'Invalid email or password'}, 401
+        return {"error": "Invalid email or password"}, 401
 
-    flask_session['user_id'] = user.user_id
-    flask_session['user_role'] = user.role.value
+    flask_session["user_id"] = user.user_id
+    flask_session["user_role"] = user.role.value
 
     return {
-        'message': 'login successful',
-        'user': user.to_dict(),
-        'role': user.role.value,  # Include role for SRS-FN-login-003
+        "message": "login successful",
+        "user": user.to_dict(),
+        "role": user.role.value,  # Include role for SRS-FN-login-003
     }, 200
 
 
 def logout_user(flask_session):
     flask_session.clear()
-    return {'message': 'logout successful'}, 200
+    return {"message": "logout successful"}, 200

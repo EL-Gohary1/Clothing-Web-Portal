@@ -12,7 +12,7 @@ from services.customer_service import (
 customer_bp = Blueprint("customer", __name__, url_prefix="/api/customer")
 
 
-@customer_bp.get("/products")
+@customer_bp.get("/")
 @role_required("CUSTOMER")
 def products_page():
     body, status_code = get_approved_products()
@@ -42,7 +42,9 @@ def view_cart():
     if status_code == 200:
         cart_data = body.get("cart")
         if cart_data:
-            return render_template("cart-page.html", cart=cart_data, user=g.current_user)
+            return render_template(
+                "cart-page.html", cart=cart_data, user=g.current_user
+            )
         else:
             return render_template("cart-page.html", cart=None, user=g.current_user)
     else:

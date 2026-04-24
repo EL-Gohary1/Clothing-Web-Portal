@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 from config import config
 from models import db
 from routes.auth_routes import auth_bp
-from routes.dashboard_routes import dashboard_bp
+# from routes.dashboard_routes import dashboard_bp
 from routes.customer_routes import customer_bp
 from routes.admin_routes import admin_bp
 from routes.supplier_routes import supplier_bp
@@ -29,7 +29,7 @@ def create_app(config_name=None):
             db.create_all()
 
     app.register_blueprint(auth_bp)
-    app.register_blueprint(dashboard_bp)
+    # app.register_blueprint(dashboard_bp)
     app.register_blueprint(customer_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(supplier_bp)

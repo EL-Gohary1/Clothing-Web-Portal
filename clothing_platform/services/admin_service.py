@@ -1,4 +1,3 @@
-from werkzeug.security import generate_password_hash
 
 from models import db, User, UserRole
 from models.product_model import Product, ProductStatus
@@ -38,9 +37,10 @@ def add_user(payload):
     user = User(
         name=name,
         email=email,
-        password=generate_password_hash(password),
+        password=password,
         role=UserRole[role_raw],
     )
+    
     db.session.add(user)
     db.session.commit()
     return {'message': 'user created successfully', 'user': user.to_dict()}, 201
