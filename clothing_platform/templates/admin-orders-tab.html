@@ -304,7 +304,7 @@
             <div class="welcome-text">
                 Welcome, <span class="admin-name">{{user.name}}</span>
             </div>
-            <a href="../ProfilePge/profile.html">
+            <a href="/auth/profile">
                 <div class="profile-icon">Profile</div>
             </a>
         </div>
@@ -314,8 +314,8 @@
         <div class="dropdown">
             <button class="dropbtn">Actions</button>
             <div class="dropdown-content">
-                <a href="Add-user.html">Add user</a>
-                <a href="Add-product_admin.html">Add product</a>
+                <a href="/admin-dashboard/add-user">Add user</a>
+                <a href="/admin-dashboard/add-product">Add product</a>
             </div>
         </div>
     </div>
@@ -381,19 +381,13 @@
             }
 
             container.innerHTML = orders.map(order => `
-                <div class="order-item" data-id="${order.id}">
+                <div class="order-item" data-id="${order.order_id}">
                     <div class="order-info">
-                        <div class="order-title">${order.orderId}</div>
-                        <div class="order-details">${order.customerName} | ${order.supplierName}</div>
+                        <div class="order-title">Order ID: ${order.order_id}</div>
+                        <div class="order-details">Customer ID: ${order.customer_id}, Receiver: ${order.receiver_name}, Total: ${order.total_price} EGP </div>
                     </div>
-                    <button class="delete-icon" onclick="deleteOrder(${order.id})">🗑️</button>
                 </div>
             `).join('');
-        }
-
-        function deleteOrder(id) {
-            orders = orders.filter(o => o.id !== id);
-            renderOrders();
         }
 
         renderOrders();

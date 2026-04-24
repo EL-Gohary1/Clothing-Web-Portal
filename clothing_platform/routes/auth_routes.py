@@ -1,5 +1,6 @@
 from flask import Blueprint, g, jsonify, redirect, request, session, render_template
 from middleware.auth_middleware import login_required, role_required
+from models import db
 from services.auth_service import login_user, logout_user, register_user
 
 
@@ -25,7 +26,6 @@ def register():
 
 @auth_bp.post("/login")
 def login():
-    # Support both JSON (fetch/AJAX) and regular HTML form submits.
     if request.is_json:
         payload = request.get_json(silent=True) or {}
         body, status_code = login_user(payload, session)
@@ -42,7 +42,6 @@ def login():
         if role == "ADMIN":
             return redirect("/admin-dashboard/customers")
         if role == "SUPPLIER":
-            # Supplier endpoints are JSON-only in this app.
             return redirect("/supplier-dashboard/products")
 
         return redirect("/api")
@@ -60,25 +59,33 @@ def logout():
 @auth_bp.get("/profile")
 @login_required
 def profile():
-    if status_code := 200:
-        render_template("profile.html", user=g.current_user)
-    else:
-        return render_template("error.html")
+    if g.current_user:
+       return render_template("profile.html", user=g.current_user)
+
+@auth_bp.put("/profile")
+@login_required
+def update_profile():
+    data = request.get_json()
+    print("DATA:", data)
+    user = g.current_user
+    user.name = data.get("name")
+    db.session.add(user)
+    db.session.commit()
+
+    return {"message": "Profile updated"}, 200
+# @auth_bp.get("/customer-area")
+# @role_required("CUSTOMER")
+# def customer_area():
+#     return jsonify({"message": f"Welcome customer {g.current_user.name}"}), 200
 
 
-@auth_bp.get("/customer-area")
-@role_required("CUSTOMER")
-def customer_area():
-    return jsonify({"message": f"Welcome customer {g.current_user.name}"}), 200
+# @auth_bp.get("/supplier-area")
+# @role_required("SUPPLIER")
+# def supplier_area():
+#     return jsonify({"message": f"Welcome supplier {g.current_user.name}"}), 200
 
 
-@auth_bp.get("/supplier-area")
-@role_required("SUPPLIER")
-def supplier_area():
-    return jsonify({"message": f"Welcome supplier {g.current_user.name}"}), 200
-
-
-@auth_bp.get("/admin-area")
-@role_required("ADMIN")
-def admin_area():
-    return jsonify({"message": f"Welcome admin {g.current_user.name}"}), 200
+# @auth_bp.get("/admin-area")
+# @role_required("ADMIN")
+# def admin_area():
+#     return jsonify({"message": f"Welcome admin {g.current_user.name}"}), 200
