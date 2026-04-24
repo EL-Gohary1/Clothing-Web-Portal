@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Lila Cloth</title>
+
+    <style>
+      :root {
+        --primary-pink: #ff8eb2;
+        --primary-purple: #c29fff;
+        --primary-blue: #8edfff;
+        --text-dark: #4a4a4a;
+        --bg-light: #fefefe;
+        --error-color: #d62839;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", sans-serif;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        height: 85px;
+        padding: 0 5%;
+        background-color: white;
+        border-bottom: 3px solid;
+        border-image: linear-gradient(
+            to right,
+            var(--primary-pink),
+            var(--primary-purple),
+            var(--primary-blue)
+          )
+          1;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .logo img {
+        height: 60px;
+        display: block;
+        width: auto;
+      }
+
+      .login-page {
+        padding: 50px 20px 70px;
+      }
+
+      .login-wrapper {
+        min-height: 560px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .login-card {
+        width: 100%;
+        max-width: 760px;
+        background-color: white;
+        border-radius: 30px;
+        padding: 70px 60px 45px;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.06);
+      }
+
+      .login-card h2 {
+        text-align: center;
+        font-size: 2.8rem;
+        margin-bottom: 55px;
+        background: linear-gradient(
+          to right,
+          var(--primary-blue),
+          var(--primary-purple),
+          var(--primary-pink)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      .form-row {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .form-row label {
+        width: 110px;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      .form-row input {
+        flex: 1;
+        height: 48px;
+        border-radius: 12px;
+        padding: 0 16px;
+        font-size: 1rem;
+        outline: none;
+        background-color: white;
+        transition: 0.3s;
+      }
+
+      .email-input {
+        border: 2px solid var(--primary-blue);
+      }
+
+      .email-input:focus {
+        box-shadow: 0 0 0 4px rgba(142, 223, 255, 0.15);
+      }
+
+      .password-box {
+        flex: 1;
+        position: relative;
+      }
+
+      .password-input {
+        width: 100%;
+        padding-right: 52px !important;
+        border: 2px solid var(--primary-purple);
+      }
+
+      .password-input:focus {
+        box-shadow: 0 0 0 4px rgba(194, 159, 255, 0.15);
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .toggle-password svg {
+        width: 22px;
+        height: 22px;
+        stroke: var(--primary-purple);
+      }
+
+      .input-error {
+        border-color: var(--error-color) !important;
+        box-shadow: 0 0 0 4px rgba(214, 40, 57, 0.1) !important;
+      }
+
+      .field-error {
+        margin-left: 128px;
+        margin-top: 6px;
+        font-size: 0.9rem;
+        color: var(--error-color);
+        min-height: 20px;
+      }
+
+      .error-message {
+        text-align: center;
+        color: var(--error-color);
+        margin-top: 10px;
+        font-size: 0.95rem;
+        min-height: 22px;
+      }
+
+      .signup-text {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 1.05rem;
+      }
+
+      .signup-text a {
+        color: var(--primary-pink);
+        font-weight: 700;
+        text-decoration: underline;
+      }
+
+      .submit-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 55px;
+      }
+
+      .submit-btn {
+        min-width: 135px;
+        height: 46px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(
+          to right,
+          var(--primary-blue),
+          var(--primary-purple),
+          var(--primary-pink)
+        );
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: lowercase;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(194, 159, 255, 0.25);
+      }
+
+      footer {
+        background-color: #fcfcfc;
+        border-top: 3px solid;
+        border-image: linear-gradient(
+            to right,
+            var(--primary-blue),
+            var(--primary-purple),
+            var(--primary-pink)
+          )
+          1;
+        padding: 50px 5% 20px 5%;
+        color: var(--text-dark);
+        margin-top: 40px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+
+      .footer-col h3 {
+        color: var(--primary-purple);
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+      }
+
+      .footer-col ul {
+        list-style: none;
+      }
+
+      .footer-col ul li {
+        margin-bottom: 10px;
+      }
+
+      .footer-col ul li a {
+        text-decoration: none;
+        color: var(--text-dark);
+        transition: 0.3s;
+      }
+
+      .footer-col ul li a:hover {
+        color: var(--primary-pink);
+        padding-left: 5px;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 0.9rem;
+        color: black;
+      }
+
+      @media (max-width: 768px) {
+        .login-card {
+          padding: 40px 22px 30px;
+        }
+
+        .login-card h2 {
+          font-size: 2.2rem;
+          margin-bottom: 35px;
+        }
+
+        .form-row {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+        }
+
+        .form-row label {
+          width: auto;
+        }
+
+        .field-error {
+          margin-left: 0;
+        }
+
+        .submit-wrapper {
+          justify-content: center;
+        }
+
+        .logo img {
+          height: 48px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index.html">
+          <img src="Image/Logo.png" alt="Lila Cloth Logo" />
+        </a>
+      </div>
+    </nav>
+
+    <main class="login-page">
+      <section class="login-wrapper">
+        <div class="login-card">
+          <h2>Welcome back!</h2>
+
+          <form id="loginForm" novalidate>
+            <div class="form-group">
+              <div class="form-row">
+                <label for="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="email-input"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <p id="emailError" class="field-error"></p>
+            </div>
+
+            <div class="form-group">
+              <div class="form-row">
+                <label for="password">Password</label>
+
+                <div class="password-box">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="password-input"
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    id="togglePasswordBtn"
+                    onclick="togglePassword()"
+                    aria-label="Show or hide password"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                      <path d="M3 3l18 18"></path>
+                      <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+                      <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
+                      <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p id="passwordError" class="field-error"></p>
+            </div>
+
+            <p class="signup-text">
+              You don't have an account?
+              <a href="register.html">Sign up here</a>
+            </p>
+
+            <p id="loginError" class="error-message"></p>
+
+            <div class="submit-wrapper">
+              <button type="submit" class="submit-btn">submit</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-col">
+          <h3>Lila Cloth</h3>
+          <p>
+            Premium modern fashion combining elegance and comfort for your
+            unique style.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="shipping.html">Shipping Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Customer Service</h3>
+          <ul>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="faqs.html">FAQs</a></li>
+            <li><a href="track.html">Track Order</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Follow Us</h3>
+          <ul>
+            <li><a href="https://instagram.com">Instagram</a></li>
+            <li><a href="https://facebook.com">Facebook</a></li>
+            <li><a href="https://tiktok.com">TikTok</a></li>
+            <li><a href="https://pinterest.com">Pinterest</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; 2024 Lila Cloth. All Rights Reserved .
+      </div>
+    </footer>
+
+    <script>
+      const eyeOpenIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      `;
+
+      const eyeOffIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+          <path d="M3 3l18 18"></path>
+          <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+          <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
+          <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+        </svg>
+      `;
+
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const loginForm = document.getElementById("loginForm");
+      const loginError = document.getElementById("loginError");
+      const togglePasswordBtn = document.getElementById("togglePasswordBtn");
+
+      function togglePassword() {
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          togglePasswordBtn.innerHTML = eyeOpenIcon;
+        } else {
+          passwordInput.type = "password";
+          togglePasswordBtn.innerHTML = eyeOffIcon;
+        }
+      }
+
+      function setError(input, errorId, message) {
+        document.getElementById(errorId).textContent = message;
+        input.classList.add("input-error");
+      }
+
+      function clearError(input, errorId) {
+        document.getElementById(errorId).textContent = "";
+        input.classList.remove("input-error");
+      }
+
+      function clearAllErrors() {
+        clearError(emailInput, "emailError");
+        clearError(passwordInput, "passwordError");
+        loginError.textContent = "";
+      }
+
+      const defaultUsers = [
+        {
+          email: "customer@gmail.com",
+          password: "123456",
+          role: "customer",
+        },
+        {
+          email: "supplier@gmail.com",
+          password: "123456",
+          role: "supplier",
+        },
+        {
+          email: "admin@gmail.com",
+          password: "123456",
+          role: "admin",
+        },
+      ];
+
+      if (!localStorage.getItem("users")) {
+        localStorage.setItem("users", JSON.stringify(defaultUsers));
+      }
+
+      loginForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        clearAllErrors();
+
+        const email = emailInput.value.trim().toLowerCase();
+        const password = passwordInput.value.trim();
+        let isValid = true;
+
+        if (email === "") {
+          setError(emailInput, "emailError", "Email required");
+          isValid = false;
+        }
+
+        if (password === "") {
+          setError(passwordInput, "passwordError", "Password required");
+          isValid = false;
+        }
+
+        if (!isValid) {
+          return;
+        }
+
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+
+        const foundUser = users.find(function (user) {
+          return (
+            user.email.toLowerCase() === email &&
+            user.password === password
+          );
+        });
+
+        if (!foundUser) {
+          loginError.textContent = "Invalid Email/Password";
+          emailInput.classList.add("input-error");
+          passwordInput.classList.add("input-error");
+          return;
+        }
+
+        localStorage.setItem("currentUser", JSON.stringify(foundUser));
+
+        if (foundUser.role === "customer") {
+          window.location.href = "customer-home.html";
+        } else if (foundUser.role === "supplier") {
+          window.location.href = "supplier-home.html";
+        } else if (foundUser.role === "admin") {
+          window.location.href = "admin-home.html";
+        }
+      });
+    </script>
+  </body>
+</html>

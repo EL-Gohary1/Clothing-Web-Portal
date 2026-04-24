@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Lila Cloth</title>
+
+    <style>
+      :root {
+        --primary-pink: #ff8eb2;
+        --primary-purple: #c29fff;
+        --primary-blue: #8edfff;
+        --text-dark: #4a4a4a;
+        --bg-light: #fefefe;
+        --error-color: #d62839;
+        --success-color: #1f8f4d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        height: 85px;
+        padding: 0 5%;
+        background-color: white;
+        border-bottom: 3px solid;
+        border-image: linear-gradient(
+            to right,
+            var(--primary-pink),
+            var(--primary-purple),
+            var(--primary-blue)
+          )
+          1;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .logo img {
+        height: 60px;
+        width: auto;
+        display: block;
+      }
+
+      .register-page {
+        padding: 40px 20px 70px;
+      }
+
+      .page-heading {
+        text-align: center;
+        font-size: 2.4rem;
+        margin-bottom: 28px;
+        background: linear-gradient(
+          to right,
+          var(--primary-blue),
+          var(--primary-purple),
+          var(--primary-pink)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .register-wrapper {
+        min-height: 620px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .register-card {
+        width: 100%;
+        max-width: 840px;
+        background-color: white;
+        border-radius: 30px;
+        padding: 60px 65px 45px;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.06);
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      .form-row {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .form-row label {
+        width: 150px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .form-row input[type="text"],
+      .form-row input[type="email"],
+      .form-row input[type="password"] {
+        flex: 1;
+        height: 48px;
+        border-radius: 12px;
+        padding: 0 16px;
+        font-size: 1rem;
+        outline: none;
+        background-color: white;
+        transition: 0.3s;
+      }
+
+      .username-input {
+        border: 2px solid var(--primary-purple);
+      }
+
+      .username-input:focus {
+        box-shadow: 0 0 0 4px rgba(194, 159, 255, 0.15);
+      }
+
+      .email-input {
+        border: 2px solid var(--primary-blue);
+      }
+
+      .email-input:focus {
+        box-shadow: 0 0 0 4px rgba(142, 223, 255, 0.15);
+      }
+
+      .password-box {
+        flex: 1;
+        position: relative;
+      }
+
+      .password-input {
+        width: 100%;
+        padding-right: 52px !important;
+        border: 2px solid var(--primary-pink);
+      }
+
+      .password-input:focus {
+        box-shadow: 0 0 0 4px rgba(255, 142, 178, 0.15);
+      }
+
+      .confirm-password-input {
+        width: 100%;
+        padding-right: 52px !important;
+        border: 2px solid var(--primary-purple);
+      }
+
+      .confirm-password-input:focus {
+        box-shadow: 0 0 0 4px rgba(194, 159, 255, 0.15);
+      }
+
+      .input-error {
+        border-color: var(--error-color) !important;
+        box-shadow: 0 0 0 4px rgba(214, 40, 57, 0.1) !important;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .toggle-password svg {
+        width: 22px;
+        height: 22px;
+        stroke: var(--primary-purple);
+      }
+
+      .field-error {
+        margin-left: 168px;
+        margin-top: 6px;
+        font-size: 0.9rem;
+        color: var(--error-color);
+        min-height: 20px;
+      }
+
+      .role-section {
+        margin-top: 10px;
+        margin-bottom: 18px;
+        padding-left: 168px;
+      }
+
+      .role-title {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 16px;
+      }
+
+      .role-options {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+
+      .role-choice {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .role-choice input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #7a7a7a;
+        border-radius: 50%;
+        position: relative;
+        background-color: white;
+        cursor: pointer;
+      }
+
+      .role-choice input[type="radio"]:checked {
+        border-color: #6f5aa5;
+      }
+
+      .role-choice input[type="radio"]:checked::after {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #8d6adf;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .role-error {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: var(--error-color);
+        min-height: 20px;
+      }
+
+      .login-text {
+        text-align: center;
+        margin-top: 22px;
+        font-size: 1rem;
+      }
+
+      .login-text a {
+        color: var(--primary-pink);
+        font-weight: 700;
+        text-decoration: underline;
+      }
+
+      .message {
+        text-align: center;
+        margin-top: 14px;
+        font-size: 0.95rem;
+        min-height: 22px;
+      }
+
+      .error-message {
+        color: var(--error-color);
+      }
+
+      .success-message {
+        color: var(--success-color);
+      }
+
+      .submit-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 40px;
+      }
+
+      .submit-btn {
+        min-width: 140px;
+        height: 46px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(
+          to right,
+          var(--primary-blue),
+          var(--primary-purple),
+          var(--primary-pink)
+        );
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(194, 159, 255, 0.25);
+      }
+
+      footer {
+        background-color: #fcfcfc;
+        border-top: 3px solid;
+        border-image: linear-gradient(
+            to right,
+            var(--primary-blue),
+            var(--primary-purple),
+            var(--primary-pink)
+          )
+          1;
+        padding: 50px 5% 20px 5%;
+        color: var(--text-dark);
+        margin-top: 40px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+
+      .footer-col h3 {
+        color: var(--primary-purple);
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+      }
+
+      .footer-col ul {
+        list-style: none;
+      }
+
+      .footer-col ul li {
+        margin-bottom: 10px;
+      }
+
+      .footer-col ul li a {
+        text-decoration: none;
+        color: var(--text-dark);
+        transition: 0.3s;
+      }
+
+      .footer-col ul li a:hover {
+        color: var(--primary-pink);
+        padding-left: 5px;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 0.9rem;
+        color: black;
+      }
+
+      @media (max-width: 768px) {
+        .page-heading {
+          font-size: 2rem;
+        }
+
+        .register-card {
+          padding: 35px 22px 30px;
+        }
+
+        .form-row {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+        }
+
+        .form-row label {
+          width: auto;
+          text-align: left;
+        }
+
+        .field-error {
+          margin-left: 0;
+        }
+
+        .role-section {
+          padding-left: 0;
+        }
+
+        .submit-wrapper {
+          justify-content: center;
+        }
+
+        .logo img {
+          height: 48px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index.html">
+          <img src="Image/Logo.png" alt="Lila Cloth Logo" />
+        </a>
+      </div>
+    </nav>
+
+    <main class="register-page">
+      <h1 class="page-heading">Welcome to our clothing website !</h1>
+
+      <section class="register-wrapper">
+        <div class="register-card">
+          <form id="registerForm" novalidate>
+            <div class="form-group">
+              <div class="form-row">
+                <label for="username">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  class="username-input"
+                  placeholder="Enter your username"
+                />
+              </div>
+              <p id="usernameError" class="field-error"></p>
+            </div>
+
+            <div class="form-group">
+              <div class="form-row">
+                <label for="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="email-input"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <p id="emailError" class="field-error"></p>
+            </div>
+
+            <div class="form-group">
+              <div class="form-row">
+                <label for="password">Password</label>
+                <div class="password-box">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="password-input"
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    onclick="togglePassword('password', this)"
+                    aria-label="Show or hide password"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                      <path d="M3 3l18 18"></path>
+                      <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+                      <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
+                      <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p id="passwordError" class="field-error"></p>
+            </div>
+
+            <div class="form-group">
+              <div class="form-row">
+                <label for="confirmPassword">Confirm password</label>
+                <div class="password-box">
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    class="confirm-password-input"
+                    placeholder="Confirm your password"
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    onclick="togglePassword('confirmPassword', this)"
+                    aria-label="Show or hide confirm password"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                      <path d="M3 3l18 18"></path>
+                      <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+                      <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
+                      <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p id="confirmPasswordError" class="field-error"></p>
+            </div>
+
+            <div class="role-section">
+              <p class="role-title">Role</p>
+
+              <div class="role-options">
+                <label class="role-choice">
+                  <input type="radio" name="role" value="customer" />
+                  <span>Customer</span>
+                </label>
+
+                <label class="role-choice">
+                  <input type="radio" name="role" value="supplier" />
+                  <span>Supplier</span>
+                </label>
+              </div>
+
+              <p id="roleError" class="role-error"></p>
+            </div>
+
+            <p class="login-text">
+              Do you have account ?
+              <a href="login.html">Login</a>
+            </p>
+
+
+            <div class="submit-wrapper">
+              <button type="submit" class="submit-btn">submit</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-col">
+          <h3>Lila Cloth</h3>
+          <p>
+            Premium modern fashion combining elegance and comfort for your
+            unique style.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="shipping.html">Shipping Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Customer Service</h3>
+          <ul>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="faqs.html">FAQs</a></li>
+            <li><a href="track.html">Track Order</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Follow Us</h3>
+          <ul>
+            <li><a href="https://instagram.com">Instagram</a></li>
+            <li><a href="https://facebook.com">Facebook</a></li>
+            <li><a href="https://tiktok.com">TikTok</a></li>
+            <li><a href="https://pinterest.com">Pinterest</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; 2024 Lila Cloth. All Rights Reserved .
+      </div>
+    </footer>
+<script>
+  const eyeOpenIcon = `
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+  `;
+
+  const eyeOffIcon = `
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+      <path d="M3 3l18 18"></path>
+      <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+      <path d="M9.88 5.09A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.03 2.94"></path>
+      <path d="M6.61 6.61C3.91 8.45 2 12 2 12s3.5 7 10 7a9.77 9.77 0 0 0 5.39-1.61"></path>
+    </svg>
+  `;
+
+  const usernameInput = document.getElementById("username");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const confirmPasswordInput = document.getElementById("confirmPassword");
+  const registerForm = document.getElementById("registerForm");
+
+  function togglePassword(inputId, button) {
+    const input = document.getElementById(inputId);
+
+    if (input.type === "password") {
+      input.type = "text";
+      button.innerHTML = eyeOpenIcon;
+    } else {
+      input.type = "password";
+      button.innerHTML = eyeOffIcon;
+    }
+  }
+
+  function setError(input, errorId, message) {
+    document.getElementById(errorId).textContent = message;
+    if (input) {
+      input.classList.add("input-error");
+    }
+  }
+
+  function clearError(input, errorId) {
+    document.getElementById(errorId).textContent = "";
+    if (input) {
+      input.classList.remove("input-error");
+    }
+  }
+
+  function clearAllErrors() {
+    clearError(usernameInput, "usernameError");
+    clearError(emailInput, "emailError");
+    clearError(passwordInput, "passwordError");
+    clearError(confirmPasswordInput, "confirmPasswordError");
+    document.getElementById("roleError").textContent = "";
+  }
+
+  function validateUsername() {
+    const username = usernameInput.value.trim();
+
+    if (username === "") {
+      setError(usernameInput, "usernameError", "Required fields missing");
+      return false;
+    }
+
+    if (username.length < 3 || username.length > 50) {
+      setError(usernameInput, "usernameError", "Username must be 3-50 characters");
+      return false;
+    }
+
+    clearError(usernameInput, "usernameError");
+    return true;
+  }
+
+  function validateEmail() {
+    const email = emailInput.value.trim().toLowerCase();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (email === "") {
+      setError(emailInput, "emailError", "Required fields missing");
+      return false;
+    }
+
+    if (!emailPattern.test(email)) {
+      setError(emailInput, "emailError", "Invalid Email format.");
+      return false;
+    }
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const emailExists = users.some(function (user) {
+      return user.email.toLowerCase() === email;
+    });
+
+    if (emailExists) {
+      setError(emailInput, "emailError", "Email already exists");
+      return false;
+    }
+
+    clearError(emailInput, "emailError");
+    return true;
+  }
+
+  function validatePassword() {
+    const password = passwordInput.value.trim();
+
+    if (password === "") {
+      setError(passwordInput, "passwordError", "Required fields missing");
+      return false;
+    }
+
+    if (password.length < 8 || password.length > 64) {
+      setError(passwordInput, "passwordError", "Password must be 8-64 characters");
+      return false;
+    }
+
+    clearError(passwordInput, "passwordError");
+    return true;
+  }
+
+  function validateConfirmPassword() {
+    const password = passwordInput.value.trim();
+    const confirmPassword = confirmPasswordInput.value.trim();
+
+    if (confirmPassword === "") {
+      setError(confirmPasswordInput, "confirmPasswordError", "Required fields missing");
+      return false;
+    }
+
+    if (password !== confirmPassword) {
+      setError(
+        confirmPasswordInput,
+        "confirmPasswordError",
+        "Password and Confirm Password do not match"
+      );
+      return false;
+    }
+
+    clearError(confirmPasswordInput, "confirmPasswordError");
+    return true;
+  }
+
+  function validateRole() {
+    const selectedRole = document.querySelector('input[name="role"]:checked');
+
+    if (!selectedRole) {
+      document.getElementById("roleError").textContent = "Please select a role";
+      return false;
+    }
+
+    document.getElementById("roleError").textContent = "";
+    return true;
+  }
+
+  registerForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    clearAllErrors();
+
+    const isUsernameValid = validateUsername();
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    const isConfirmPasswordValid = validateConfirmPassword();
+    const isRoleValid = validateRole();
+
+    if (
+      !isUsernameValid ||
+      !isEmailValid ||
+      !isPasswordValid ||
+      !isConfirmPasswordValid ||
+      !isRoleValid
+    ) {
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const newUser = {
+      username: usernameInput.value.trim(),
+      email: emailInput.value.trim().toLowerCase(),
+      password: passwordInput.value.trim(),
+      role: document.querySelector('input[name="role"]:checked').value,
+    };
+
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    registerForm.reset();
+    window.location.href = "login.html";
+  });
+</script>
+ 
+  </body>
+</html>
