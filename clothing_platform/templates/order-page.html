@@ -103,7 +103,7 @@
   </head>
   <body>
     <!-- shared navbar -->
-    <iframe src="/static/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
+    <iframe src={{ '/static/customer-nav-bar.html' if user else '/static/nav-bar.html' }} class="nav-frame" scrolling="no"></iframe>
 
     <main class="main-content">
       <div class="orders-card">

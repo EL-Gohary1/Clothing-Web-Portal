@@ -176,7 +176,7 @@
   <body>
     <!-- shared NAVBAR -->
     <iframe
-      src="/static/nav-bar.html"
+      src={{ '/static/customer-nav-bar.html' if user else '/static/nav-bar.html' }}
       class="nav-frame"
       scrolling="no"
     ></iframe>
