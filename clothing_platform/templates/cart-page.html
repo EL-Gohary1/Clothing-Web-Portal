@@ -6,25 +6,7 @@
     <link rel="stylesheet" href="/static/Global.css" />
     <link rel="stylesheet" href="/static/cart.css" />
     <title>Your Cart | Lila Cloth</title>
-    <style>
-      /* Adding a few styles for the frames since they weren't in your snippet */
-      .nav-frame {
-        width: 100%;
-        height: 85px;
-        border: none;
-      }
-      .footer-frame {
-        width: 100%;
-        height: 320px;
-        border: none;
-        margin-top: 40px;
-      }
-
-      .total-display span {
-        font-weight: bold;
-        color: var(--primary-purple, #6a1b9a);
-      }
-    </style>
+    <style></style>
   </head>
   <body>
     <!-- shared navbar -->
@@ -37,7 +19,7 @@
     <main class="cart-container">
       <h1>Shopping Cart</h1>
 
-      <div class="cart-item" id="cart-container"></div>
+      <div id="cart-items-wrapper"></div>
 
       <div class="cart-summary">
         <div class="total-display">
@@ -55,167 +37,136 @@
     ></iframe>
 
     <script>
-            let cart = {{ cart|tojson }};
+      let cart = {{ cart | tojson }};
 
-            console.log("Cart Data:", cart);
+      function renderCartItems() {
+        const container = document.getElementById("cart-items-wrapper");
 
-            function renderCartItems() {
-                const container = document.getElementById("cart-container");
+        if (!cart || !cart.items || cart.items.length === 0) {
+          container.innerHTML = "<p>Your cart is empty.</p>";
+          document.getElementById("grand-total").innerText = "0.00 EGP";
+          return;
+        }
 
-                if (!cart || !cart.items || cart.items.length === 0) {
-                    container.innerHTML = "<p>The Cart is Empty</p>";
-                    document.getElementById("grand-total").innerText = "0.00 EGP";
-                    return;
-                }
-
-                container.innerHTML = cart.items.map(item => `
-                    <div class="cart-item" id="item-${item.product_id}">
-
-                        <div class="item-left">
-                            <div class="photo-box">
-                                <img src="/static/images/${item.product_photo}" />
-                            </div>
-
-                            <div class="quantity-controls">
-                                <button onclick="decreaseQty(${item.product_id})">-</button>
-
-                                <span id="qty-${item.product_id}">
-                                    ${item.quantity}
-                                </span>
-
-                                <button onclick="increaseQty(${item.product_id})">+</button>
-
-                                <button onclick="removeItem(${item.product_id})">🗑️</button>
-                            </div>
-                        </div>
-
-                        <div class="item-right">
-                            <div class="field item-name">
-                                ${item.product_title}
-                            </div>
-
-                            <div class="field price-box">
-                                Price:
-                                <span id="price-${item.product_id}">
-                                    ${item.unit_price}
-                                </span>
-                            </div>
-
-                            <div class="field">
-                                Subtotal:
-                                <span class="item-subtotal" id="subtotal-${item.product_id}">
-                                    ${item.unit_price * item.quantity}
-                                </span>
-                            </div>
-
-                            <div class="field item-desc">
-                                ${item.product_description}
-                            </div>
-                        </div>
-
+        container.innerHTML = cart.items
+          .map(
+            (item) => `
+            <div class="cart-item" id="item-${item.product_id}">
+                <div class="item-left">
+                    <div class="photo-box">
+                        <img src="/static/images/${item.product_photo}" alt="${item.product_title}" />
                     </div>
-                `).join('');
 
-                updateGrandTotal();
-            }
-            function updateGrandTotal() {
-                let total = 0;
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="decreaseQty(${item.product_id})">-</button>
+                        <span id="qty-${item.product_id}">${item.quantity}</span>
+                        <button class="qty-btn" onclick="increaseQty(${item.product_id})">+</button>
+                        <button class="trash-btn" onclick="removeItem(${item.product_id})">🗑️</button>
+                    </div>
+                </div>
 
-                document.querySelectorAll(".item-subtotal").forEach(el => {
-                    total += parseFloat(el.innerText);
-                });
+                <div class="item-right">
+                    <div class="field item-name">
+                        ${item.product_title}
+                    </div>
 
-                document.getElementById("grand-total").innerText =
-                    total.toFixed(2) + " EGP";
-            }
+                    <div class="field">
+                        Price: <span id="price-${item.product_id}">${item.unit_price.toFixed(2)}</span> EGP
+                    </div>
 
-            async function increaseQty(productId) {
-                const qtyEl = document.getElementById(`qty-${productId}`);
-                let newQty = parseInt(qtyEl.innerText) + 1;
+                    <div class="field">
+                        Subtotal:
+                        <span class="item-subtotal" id="subtotal-${item.product_id}">
+                            ${(item.unit_price * item.quantity).toFixed(2)}
+                        </span> EGP
+                    </div>
 
-                const res = await fetch(`/customer/cart/${productId}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ quantity: newQty })
-                });
+                    <div class="field item-desc">
+                        ${item.product_description || 'No description available.'}
+                    </div>
+                </div>
+            </div>
+          `
+          )
+          .join("");
 
-                const data = await res.json();
+        updateGrandTotal();
+      }
 
-                if (!res.ok) {
-                    alert(data.message);
-                    return;
-                }
+      function updateGrandTotal() {
+        let total = 0;
+        document.querySelectorAll(".item-subtotal").forEach((el) => {
+          total += parseFloat(el.innerText);
+        });
+        document.getElementById("grand-total").innerText = total.toFixed(2) + " EGP";
+      }
 
-                qtyEl.innerText = newQty;
+      async function increaseQty(productId) {
+        const qtyEl = document.getElementById(`qty-${productId}`);
+        let newQty = parseInt(qtyEl.innerText) + 1;
+        await updateServerQty(productId, newQty);
+      }
 
-                const price = parseFloat(
-                    document.getElementById(`price-${productId}`).innerText
-                );
+      async function decreaseQty(productId) {
+        const qtyEl = document.getElementById(`qty-${productId}`);
+        let newQty = parseInt(qtyEl.innerText) - 1;
+        if (newQty < 1) return;
+        await updateServerQty(productId, newQty);
+      }
 
-                document.getElementById(`subtotal-${productId}`).innerText =
-                    (price * newQty).toFixed(2);
+      async function updateServerQty(productId, newQty) {
+        try {
+          const res = await fetch(`/customer/cart/${productId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quantity: newQty }),
+          });
 
-                updateGrandTotal();
-            }
-            async function decreaseQty(productId) {
-                const qtyEl = document.getElementById(`qty-${productId}`);
-                let newQty = parseInt(qtyEl.innerText) - 1;
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.message);
+            return;
+          }
 
-                if (newQty < 1) return;
+          // Update UI
+          document.getElementById(`qty-${productId}`).innerText = newQty;
+          const price = parseFloat(document.getElementById(`price-${productId}`).innerText);
+          document.getElementById(`subtotal-${productId}`).innerText = (price * newQty).toFixed(2);
+          updateGrandTotal();
+        } catch (err) {
+          console.error("Error updating quantity:", err);
+        }
+      }
 
-                const res = await fetch(`/customer/cart/${productId}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ quantity: newQty })
-                });
+      async function removeItem(productId) {
+        if (!confirm("Remove this item from your cart?")) return;
 
-                const data = await res.json();
+        try {
+          const res = await fetch(`/customer/cart/${productId}`, { method: "DELETE" });
+          const data = await res.json();
 
-                if (!res.ok) {
-                    alert(data.message);
-                    return;
-                }
+          if (!res.ok) {
+            alert(data.message);
+            return;
+          }
 
-                qtyEl.innerText = newQty;
+          document.getElementById(`item-${productId}`).remove();
+          updateGrandTotal();
 
-                const price = parseFloat(
-                    document.getElementById(`price-${productId}`).innerText
-                );
-
-                document.getElementById(`subtotal-${productId}`).innerText =
-                    (price * newQty).toFixed(2);
-
-                updateGrandTotal();
-            }
-
-            async function removeItem(productId) {
-                if (!confirm("Remove this item?")) return;
-
-                const res = await fetch(`/customer/cart/${productId}`, {
-                    method: "DELETE"
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    alert(data.message);
-                    return;
-                }
-
-                document.getElementById(`item-${productId}`).remove();
-
-                updateGrandTotal();
-            }
-
-            function goToCheckout() {
-             window.location.href = "/customer/checkout";
-            }
+          if (document.querySelectorAll('.cart-item').length === 0) {
             renderCartItems();
-            updateGrandTotal();
+          }
+        } catch (err) {
+          console.error("Error removing item:", err);
+        }
+      }
+
+      function goToCheckout() {
+        window.location.href = "/customer/checkout";
+      }
+
+      // Initialize
+      renderCartItems();
     </script>
   </body>
 </html>
