@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_migrate import Migrate
 from config import config
 from models import db
@@ -8,6 +8,7 @@ from routes.auth_routes import auth_bp
 from routes.customer_routes import customer_bp
 from routes.admin_routes import admin_bp
 from routes.supplier_routes import supplier_bp
+from services.customer_service import get_approved_products
 
 
 migrate = Migrate()
@@ -32,39 +33,49 @@ def create_app(config_name=None):
     app.register_blueprint(supplier_bp)
 
 
+    @app.get("/")
+    def home():
+        body, status_code = get_approved_products()
+        if status_code == 200:
+            return render_template(
+                "index.html", products=body["products"]
+            )
+        else:
+            return render_template("error.html", message=body["message"])
+
     @app.get('/api')
     def index():
         return jsonify({
             'message': 'Clothing Portal API',
             'endpoints': {
                 'auth': [
-                    'GET /api/auth/register-page',
-                    'GET /api/auth/login-page',
-                    'POST /api/auth/register',
-                    'POST /api/auth/login',
-                    'POST /api/auth/logout',
-                    'GET /api/auth/me',
+                    'GET /auth/register-page',
+                    'GET /auth/login-page',
+                    'POST /auth/register',
+                    'POST /auth/login',
+                    'POST /auth/logout',
+                    'GET /auth/me',
                 ],
                 
-                'admin': [
-                    'GET  /api/admin/customers',
-                    'GET  /api/admin/suppliers',
-                    'POST /api/admin/users',
-                    'DELETE /api/admin/users/<id>',
-                    'GET  /api/admin/products?status=',
-                    'GET  /api/admin/products/search?keyword=',
-                    'POST /api/admin/products',
-                    'PATCH /api/admin/products/<id>/approve',
-                    'PATCH /api/admin/products/<id>/reject',
-                    'DELETE /api/admin/products/<id>',
-                    'GET  /api/admin/orders',
+                'admin-dashboard': [
+                    'GET  /admin-dashboard/customers',
+                    'GET  /admin-dashboard/suppliers',
+                    'POST /admin-dashboard/users',
+                    'DELETE /admin-dashboard/users/<id>',
+                    'GET  /admin-dashboard/products?status=',
+                    'GET  /admin-dashboard/products/search?keyword=',
+                    'POST /admin-dashboard/products',
+                    'PATCH /admin-dashboard/products/<id>/approve',
+                    'PATCH /admin-dashboard/products/<id>/reject',
+                    'DELETE /admin-dashboard/products/<id>',
+                    'GET  /admin-dashboard/orders',
                 ],
-                'supplier': [
-                    'GET  /api/supplier/products?status=',
-                    'GET  /api/supplier/products/search?keyword=',
-                    'POST /api/supplier/products',
-                    'DELETE /api/supplier/products/<id>',
-                    'GET  /api/supplier/orders',
+                'supplier-dashboard': [
+                    'GET  /supplier-dashboard/products?status=',
+                    'GET  /supplier-dashboard/products/search?keyword=',
+                    'POST /supplier-dashboard/products',
+                    'DELETE /supplier-dashboard/products/<id>',
+                    'GET  /supplier-dashboard/orders',
                 ],
             },
         })
