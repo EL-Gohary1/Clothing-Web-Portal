@@ -27,36 +27,48 @@
 
       .footer-frame {
         width: 100%;
-        height: 320px; /* Adjust based on content */
+        height: 320px;
         border: none;
         margin-top: auto;
       }
 
-      /* Search Section */
       .search-container {
+        margin: 40px 5%;
         display: flex;
         justify-content: center;
-        padding: 40px 20px;
+        gap: 10px;
       }
 
-      .search-bar {
-        width: 100%;
-        max-width: 700px;
-        padding: 15px 25px;
-        border: 2px solid var(--primary-blue);
-        border-radius: 50px;
-        font-size: 1rem;
+      .search-input {
+        width: 400px;
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+        border-radius: 30px;
+        font-size: 0.9rem;
         outline: none;
-        transition: 0.3s;
-        box-shadow: 0 4px 15px rgba(142, 223, 255, 0.2);
+        transition: 0.2s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       }
 
-      .search-bar:focus {
-        border-color: var(--primary-purple);
-        box-shadow: 0 4px 15px rgba(194, 159, 255, 0.3);
+      .search-input:focus {
+        border-color: #c29fff;
       }
 
-      /* Product Grid */
+      .search-btn {
+        background: linear-gradient(135deg, #ff8eb2, #c29fff);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .search-btn:hover {
+        opacity: 0.9;
+      }
+
       .product-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -66,7 +78,6 @@
         margin: 0 auto;
       }
 
-      /* Product Card */
       .card {
         background: white;
         border-radius: 20px;
@@ -134,7 +145,6 @@
         padding: 0 10px;
       }
 
-      /* Quantity Selector */
       .quantity-selector {
         display: flex;
         align-items: center;
@@ -159,7 +169,6 @@
         border-color: var(--primary-pink);
       }
 
-      /* Add to Cart Button */
       .add-to-cart {
         width: 100%;
         padding: 12px;
@@ -187,29 +196,32 @@
         .product-grid {
           grid-template-columns: 1fr;
         }
-        .nav-frame {
-          height: 70px;
+        .search-container {
+          flex-direction: column;
+          padding: 0 20px;
+        }
+        .search-input {
+          width: 100%;
         }
       }
     </style>
   </head>
   <body>
-    <!-- REUSABLE NAVBAR -->
-    <iframe src="navbar.html" class="nav-frame" scrolling="no"></iframe>
+    <!-- shared navbar -->
+    <iframe src="Css/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
 
     <main>
-      <!-- SEARCH BAR -->
-      <section class="search-container">
+      <div class="search-container">
         <input
           type="text"
-          class="search-bar"
-          placeholder="Search for dresses, tops, or accessories..."
+          class="search-input"
+          id="searchInput"
+          placeholder="Search for names..."
         />
-      </section>
+        <button class="search-btn" id="searchBtn">Search</button>
+      </div>
 
-      <!-- PRODUCT GRID -->
-      <section class="product-grid">
-        <!-- Card 1 -->
+      <section class="product-grid" id="productGrid">
         <div class="card">
           <div class="photo-area">
             <img src="Image/stripped pullover.jfif" alt="Dress" />
@@ -225,15 +237,14 @@
               <span>Supplier: Lila Luxe</span>
             </div>
             <div class="quantity-selector">
-              <button class="qty-btn">-</button>
-              <span>1</span>
-              <button class="qty-btn">+</button>
+              <button class="qty-btn minus">-</button>
+              <span class="qty-val">1</span>
+              <button class="qty-btn plus">+</button>
             </div>
             <button class="add-to-cart">Add to Cart</button>
           </div>
         </div>
 
-        <!-- Card 2 -->
         <div class="card">
           <div class="photo-area">
             <img
@@ -242,7 +253,7 @@
             />
           </div>
           <div class="card-details">
-            <div class="name">Pastel Dream Blazer</div>
+            <div class="name">Cloud Dream Blazer</div>
             <div class="desc">
               Tailored fit blazer in soft lavender wool blend.
             </div>
@@ -254,15 +265,14 @@
               <span>Supplier: Lila Luxe</span>
             </div>
             <div class="quantity-selector">
-              <button class="qty-btn">-</button>
-              <span>1</span>
-              <button class="qty-btn">+</button>
+              <button class="qty-btn minus">-</button>
+              <span class="qty-val">1</span>
+              <button class="qty-btn plus">+</button>
             </div>
             <button class="add-to-cart">Add to Cart</button>
           </div>
         </div>
 
-        <!-- Card 3 -->
         <div class="card">
           <div class="photo-area">
             <img
@@ -283,9 +293,9 @@
               <span>Supplier: Lila Luxe</span>
             </div>
             <div class="quantity-selector">
-              <button class="qty-btn">-</button>
-              <span>1</span>
-              <button class="qty-btn">+</button>
+              <button class="qty-btn minus">-</button>
+              <span class="qty-val">1</span>
+              <button class="qty-btn plus">+</button>
             </div>
             <button class="add-to-cart">Add to Cart</button>
           </div>
@@ -293,7 +303,65 @@
       </section>
     </main>
 
-    <!-- REUSABLE FOOTER -->
+    <!-- shared footer -->
     <iframe src="footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+      const USER_LOGGED_IN = false;
+
+      const searchInput = document.getElementById("searchInput");
+      const searchBtn = document.getElementById("searchBtn");
+
+      function performSearch() {
+        const query = searchInput.value.toLowerCase().trim();
+        const cards = document.querySelectorAll(".card");
+
+        cards.forEach((card) => {
+          const productName = card
+            .querySelector(".name")
+            .innerText.toLowerCase();
+          if (productName.includes(query)) {
+            card.style.display = "flex";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
+
+      searchBtn.addEventListener("click", performSearch);
+      searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") performSearch();
+      });
+
+      document.querySelectorAll(".card").forEach((card) => {
+        const plusBtn = card.querySelector(".plus");
+        const minusBtn = card.querySelector(".minus");
+        const qtyDisplay = card.querySelector(".qty-val");
+        const addBtn = card.querySelector(".add-to-cart");
+        const productName = card.querySelector(".name").innerText;
+
+        plusBtn.addEventListener("click", () => {
+          let currentQty = parseInt(qtyDisplay.innerText);
+          qtyDisplay.innerText = currentQty + 1;
+        });
+
+        minusBtn.addEventListener("click", () => {
+          let currentQty = parseInt(qtyDisplay.innerText);
+          if (currentQty > 1) {
+            qtyDisplay.innerText = currentQty - 1;
+          }
+        });
+
+        addBtn.addEventListener("click", () => {
+          if (!USER_LOGGED_IN) {
+            alert("Please log in first to add items to your cart.");
+          } else {
+            alert(
+              `Success! Added ${qtyDisplay.innerText} unit(s) of "${productName}" to your cart.`,
+            );
+          }
+        });
+      });
+    </script>
   </body>
 </html>

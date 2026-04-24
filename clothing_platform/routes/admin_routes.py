@@ -1,28 +1,21 @@
-from flask import Blueprint, jsonify, request, g
+from flask import Blueprint, jsonify, render_template, request, g
 
 from middleware.auth_middleware import role_required
 from services.admin_service import (
-    # users
     get_all_customers,
     get_all_suppliers,
-    get_user_by_id,
     add_user,
     remove_user,
-
-    # products
     get_products,
     add_product,
     approve_product,
     reject_product,
     remove_product,
     search_products,
-
-    # orders
     get_all_orders,
-    get_order_by_id,
 )
 
-admin_bp = Blueprint('admin', __name__, url_prefix='/api/admin')
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin-dashboard')
 
 
 @admin_bp.before_request
@@ -35,22 +28,31 @@ def require_admin():
 @admin_bp.get('/customers')
 def view_all_customers():
     # GET /api/admin/customers - list customers
-    body, status = get_all_customers()
-    return jsonify(body), status
+    body, status_code = get_all_customers()
+    if status_code == 200:
+        return render_template("admin-customers-tab.html", customers=body["customers"], user=g.current_user)
+    else:
+        return render_template("error.html", message=body["message"])
 
 
 @admin_bp.get('/suppliers')
 def view_all_suppliers():
     # GET /api/admin/suppliers - list suppliers
-    body, status = get_all_suppliers()
-    return jsonify(body), status
+    body, status_code = get_all_suppliers()
+    if status_code == 200:
+        return render_template("admin-suppliers-tab.html", suppliers=body["suppliers"], user=g.current_user)
+    else:
+        return render_template("error.html", message=body["message"])
 
+@admin_bp.get('/add-user')
+def get_add_user_form():
+    # GET /api/admin/add-user - display form to add a user
+    return render_template("admin-add-user.html", user=g.current_user)
 
-@admin_bp.get('/users/<int:user_id>')
-def view_user(user_id):
-    # GET /api/admin/users/<id> - get a user by ID
-    body, status = get_user_by_id(user_id)
-    return jsonify(body), status
+@admin_bp.get('/add-product')
+def get_add_product_form():
+    # GET /api/admin/add-product - display form to add a product
+    return render_template("add-product.html", user=g.current_user)
 
 
 @admin_bp.post('/users')
@@ -62,28 +64,27 @@ def create_user():
     #     password 
     #     role
     payload = request.get_json(silent=True) or {}
-    body, status = add_user(payload)
-    return jsonify(body), status
+    body, status_code = add_user(payload)
+    return jsonify(body), status_code
 
 
 @admin_bp.delete('/users/<int:user_id>')
 def delete_user(user_id):
     # DELETE /api/admin/users/<id> - remove a user
-    body, status = remove_user(user_id)
-    return jsonify(body), status
-
-
+    body, status_code = remove_user(user_id)
+    return jsonify(body), status_code
 
 
 @admin_bp.get('/products')
 def view_products():
     # GET /api/admin/products?status=PENDING|APPROVED|REJECTED - list products
-
     # filter: (PENDING / APPROVED / REJECTED)
     
-    status_filter = request.args.get('status')
-    body, status = get_products(status_filter)
-    return jsonify(body), status
+    body, status_code = get_products(None)
+    if status_code == 200:
+        return render_template("admin-products-tab.html", products=body["products"], user=g.current_user)
+    else:
+        return render_template("error.html", message=body["message"])
 
 
 @admin_bp.get('/products/search')
@@ -96,8 +97,7 @@ def search():
 
 @admin_bp.post('/products')
 def create_product():
-    # POST /api/admin/products - adds a product
-
+    # POST /api/admin/add-products - adds a product
     # Body :
     #     supplier_id    
     #     product_title  
@@ -132,16 +132,12 @@ def delete_product(product_id):
     return jsonify(body), status
 
 
-
 @admin_bp.get('/orders')
 def view_all_orders():
     #GET /api/admin/orders - list orders
     body, status = get_all_orders()
-    return jsonify(body), status
+    if status == 200:
+            return render_template("admin-orders-tab.html", orders=body["orders"], user=g.current_user)
+    else:
+        return render_template("error.html", message=body["message"])
 
-
-@admin_bp.get('/orders/<int:order_id>')
-def view_order(order_id):
-    #GET /api/admin/orders/<id> — get a order by id
-    body, status = get_order_by_id(order_id)
-    return jsonify(body), status

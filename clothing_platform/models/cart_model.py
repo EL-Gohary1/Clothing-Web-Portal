@@ -11,6 +11,11 @@ class Cart(db.Model):
     def __repr__(self):
         return f'<Cart {self.cart_id} for customer {self.customer_id}>'
 
+    @property
+    def items(self):
+        """Property to access cart items"""
+        return CartProduct.query.filter_by(cart_id=self.cart_id).all()
+
     def get_items(self):
         return CartProduct.query.filter_by(cart_id=self.cart_id).all()
 
@@ -27,6 +32,8 @@ class Cart(db.Model):
             'items': [{
                 'product_id': item.product_id,
                 'product_title': item.product.product_title,
+                'product_photo': item.product.photo,
+                'product_description': item.product.description,
                 'unit_price': item.product.unit_price,
                 'quantity': item.quantity,
                 'subtotal': round(item.product.unit_price * item.quantity, 2)

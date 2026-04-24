@@ -1,4 +1,3 @@
-from werkzeug.security import generate_password_hash
 
 from models import db, User, UserRole
 from models.product_model import Product, ProductStatus
@@ -15,12 +14,6 @@ def get_all_suppliers():
     suppliers = User.query.filter_by(role=UserRole.SUPPLIER).all()
     return {'suppliers': [u.to_dict() for u in suppliers], 'count': len(suppliers)}, 200
 
-
-def get_user_by_id(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return {'error': 'user not found'}, 404
-    return {'user': user.to_dict()}, 200
 
 
 def add_user(payload):
@@ -44,9 +37,10 @@ def add_user(payload):
     user = User(
         name=name,
         email=email,
-        password=generate_password_hash(password),
+        password=password,
         role=UserRole[role_raw],
     )
+    
     db.session.add(user)
     db.session.commit()
     return {'message': 'user created successfully', 'user': user.to_dict()}, 201
@@ -56,8 +50,6 @@ def remove_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return {'error': 'user not found'}, 404
-
-    # Prevent deleting the last admin
     if user.role == UserRole.ADMIN:
         admin_count = User.query.filter_by(role=UserRole.ADMIN).count()
         if admin_count <= 1:
@@ -171,14 +163,8 @@ def search_products(keyword):
     return {'products': [p.to_dict() for p in products], 'count': len(products)}, 200
 
 
-
 def get_all_orders():
     orders = Order.query.order_by(Order.creation_date.desc()).all()
     return {'orders': [o.to_dict() for o in orders], 'count': len(orders)}, 200
 
 
-def get_order_by_id(order_id):
-    order = Order.query.get(order_id)
-    if not order:
-        return {'error': 'order not found'}, 404
-    return {'order': order.to_dict()}, 200

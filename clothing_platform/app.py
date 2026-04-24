@@ -1,13 +1,15 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_migrate import Migrate
 
 from config import config
 from models import db
 from routes.auth_routes import auth_bp
-from routes.dashboard_routes import dashboard_bp
+# from routes.dashboard_routes import dashboard_bp
+from routes.customer_routes import customer_bp
 from routes.admin_routes import admin_bp
+from routes.supplier_routes import supplier_bp
 
 
 migrate = Migrate()
@@ -27,8 +29,23 @@ def create_app(config_name=None):
             db.create_all()
 
     app.register_blueprint(auth_bp)
-    app.register_blueprint(dashboard_bp)
+    # app.register_blueprint(dashboard_bp)
+    app.register_blueprint(customer_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(supplier_bp)
+
+    # Serve static files for iframes
+    @app.route('/Css/<path:filename>')
+    def serve_css(filename):
+        return send_from_directory('templates/Css', filename)
+
+    @app.route('/NavBar.html')
+    def serve_navbar():
+        return send_from_directory('templates', 'NavBar.html')
+
+    @app.route('/Footer.html')
+    def serve_footer():
+        return send_from_directory('templates', 'Footer.html')
 
     @app.get('/api')
     def index():
@@ -51,7 +68,6 @@ def create_app(config_name=None):
                 'admin': [
                     'GET  /api/admin/customers',
                     'GET  /api/admin/suppliers',
-                    'GET  /api/admin/users/<id>',
                     'POST /api/admin/users',
                     'DELETE /api/admin/users/<id>',
                     'GET  /api/admin/products?status=',
@@ -61,7 +77,13 @@ def create_app(config_name=None):
                     'PATCH /api/admin/products/<id>/reject',
                     'DELETE /api/admin/products/<id>',
                     'GET  /api/admin/orders',
-                    'GET  /api/admin/orders/<id>',
+                ],
+                'supplier': [
+                    'GET  /api/supplier/products?status=',
+                    'GET  /api/supplier/products/search?keyword=',
+                    'POST /api/supplier/products',
+                    'DELETE /api/supplier/products/<id>',
+                    'GET  /api/supplier/orders',
                 ],
             },
         })

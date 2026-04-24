@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="Css/checkout.css" />
+    <link rel="stylesheet" href="Css/Global.css" />
+    <title>Checkout | Lila Cloth</title>
+  </head>
+  <body>
+    <!-- shared NAVBAR -->
+    <iframe src="Css/nav-bar.html" class="nav-frame" scrolling="no"></iframe>
+
+    <main class="main-content">
+      <div class="checkout-outer-card">
+        <h1 class="checkout-header">Checkout Page</h1>
+        <form method="POST" action="/api/customer/checkout">
+          <div class="checkout-inner-box">
+            <!-- Receiver Name -->
+            <div class="form-group">
+              <label for="name">receiver name</label>
+              <input
+                type="text"
+                id="name"
+                placeholder="Full Name"
+                name="receiver_name"
+                required
+              />
+            </div>
+
+            <!-- Receiver Phone -->
+            <div class="form-group">
+              <label for="phone">receiver phone</label>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="05x xxxx xxx"
+                name="receiver_phone"
+                required
+              />
+            </div>
+
+            <!-- City -->
+            <div class="form-group">
+              <label for="city">city</label>
+              <input
+                type="text"
+                id="city"
+                placeholder="Enter your city"
+                name="delivery_city"
+                required
+              />
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+              <label for="address">address</label>
+              <input
+                type="text"
+                id="address"
+                placeholder="Street name, Building No."
+                name="delivery_address"
+                required
+              />
+            </div>
+
+            <!-- Payment Method  -->
+            <div class="payment-bar">
+              Payment Method: <strong>cash-on-delivery</strong>
+            </div>
+
+            <!-- Buttons -->
+            <div class="action-footer">
+              <a href="/api/customer/cart" class="back-link"
+                >Back to cart page</a
+              >
+              <button type="submit" class="confirm-btn">confirm order</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!-- shared FOOTER -->
+    <iframe
+      src="Css/footer.html"
+      id="footer-iframe"
+      class="footer-frame"
+      scrolling="no"
+    ></iframe>
+  </body>
+</html>
