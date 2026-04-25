@@ -36,7 +36,7 @@
             padding: 0 5%;
             background-color: white;
             border-bottom: 3px solid;
-            border-photo: linear-gradient(
+            border-image: linear-gradient(
                 to right,
                 var(--primary-pink),
                 var(--primary-purple),
@@ -251,10 +251,6 @@
             flex-wrap: wrap;
         }
 
-        .product-photo {
-            flex-shrink: 0;
-        }
-
         .product-photo img {
             width: 180px;
             height: 180px;
@@ -279,10 +275,6 @@
             line-height: 1.6;
         }
 
-        .product-details span {
-            color: #888;
-        }
-
         .product-right {
             display: flex;
             flex-direction: column;
@@ -299,15 +291,8 @@
             font-weight: bold;
         }
 
-        .status-approved {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
 
         .action-buttons {
             display: flex;
@@ -337,29 +322,15 @@
         }
 
         .delete-icon {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: #ff4444;
-            padding: 5px;
-        }
-
-        .approve-btn:hover, .reject-btn:hover, .delete-icon:hover {
-            opacity: 0.8;
+            background: none; border: none; cursor: pointer;
+            font-size: 1.2rem; color: #ff4444; padding: 5px;
         }
 
         footer {
             background-color: #fcfcfc;
             border-top: 3px solid;
-            border-photo: linear-gradient(
-                to right,
-                var(--primary-blue),
-                var(--primary-purple),
-                var(--primary-pink)
-            ) 1;
+            border-image: linear-gradient(to right, var(--primary-blue), var(--primary-purple), var(--primary-pink)) 1;
             padding: 50px 5% 20px 5%;
-            color: var(--text-dark);
             margin-top: auto;
         }
 
@@ -367,74 +338,19 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-col h3 {
-            color: var(--primary-purple);
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-
-        .footer-col ul {
-            list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 10px;
-        }
-
-        .footer-col ul li a {
-            text-decoration: none;
-            color: var(--text-dark);
-            transition: 0.3s;
-        }
-
-        .footer-col ul li a:hover {
-            color: var(--primary-pink);
-            padding-left: 5px;
         }
 
         .footer-bottom {
             text-align: center;
             padding-top: 20px;
             border-top: 1px solid #eee;
+            margin-top: 40px;
             font-size: 0.9rem;
-            color: black;
         }
 
         @media (max-width: 700px) {
-            .navbar {
-                padding: 0 15px;
-            }
-            .logo img {
-                height: 45px;
-            }
-            .actions-bar, .search-container, .main-tabs, .sub-tabs, .products-container {
-                margin-left: 25px;
-                margin-right: 25px;
-            }
-            .product-item {
-                flex-direction: column;
-                text-align: center;
-            }
-            .product-right {
-                align-items: center;
-                width: 100%;
-            }
-            .profile-icon {
-                padding: 6px 14px;
-                font-size: 0.75rem;
-            }
-            .welcome-text {
-                font-size: 0.8rem;
-            }
-            .search-input {
-                width: 100%;
-            }
-            .search-container {
-                flex-direction: column;
-            }
+            .product-item { flex-direction: column; text-align: center; }
+            .product-right { align-items: center; width: 100%; }
         }
     </style>
 </head>
@@ -442,15 +358,13 @@
 
     <nav class="navbar">
         <div class="logo">
-            <img src="../photo/Logo.png" alt="Lila Cloth Logo" onerror="this.src='https://via.placeholder.com/60?text=Logo'">
+            <img src="../photo/Logo.png" alt="Lila Cloth Logo">
         </div>
         <div class="profile-section">
             <div class="welcome-text">
                 Welcome, <span class="admin-name">{{user.name}}</span>
             </div>
-            <a href="/auth/profile">
-                <div class="profile-icon">Profile</div>
-            </a>
+            <a href="/auth/profile" class="profile-icon">Profile</a>
         </div>
     </nav>
 
@@ -480,7 +394,6 @@
         <button class="sub-tab active" data-filter="all">All</button>
         <button class="sub-tab" data-filter="APPROVED">Approved</button>
         <button class="sub-tab" data-filter="PENDING">Pending</button>
-        <button class="sub-tab" data-filter="REJECTED">Rejected</button>
     </div>
 
     <div class="products-container" id="productsList"></div>
@@ -489,67 +402,46 @@
         <div class="footer-container">
             <div class="footer-col">
                 <h3>Lila Cloth</h3>
-                <p>Premium modern fashion combining elegance and comfort for your unique style.</p>
+                <p>Premium modern fashion combining elegance and comfort.</p>
             </div>
             <div class="footer-col">
                 <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="shop.html">Shop</a></li>
-                    <li><a href="about.html">About Us</a></li>
-                    <li><a href="shipping.html">Shipping Policy</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>Customer Service</h3>
-                <ul>
-                    <li><a href="contact.html">Contact Us</a></li>
-                    <li><a href="faqs.html">FAQs</a></li>
-                    <li><a href="track.html">Track Order</a></li>
-                    <li><a href="privacy.html">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>Follow Us</h3>
-                <ul>
-                    <li><a href="https://instagram.com">Instagram</a></li>
-                    <li><a href="https://facebook.com">Facebook</a></li>
-                    <li><a href="https://tiktok.com">TikTok</a></li>
-                    <li><a href="https://pinterest.com">Pinterest</a></li>
+                <ul style="list-style: none;">
+                    <li><a href="index.html" style="text-decoration:none; color:var(--text-dark);">Home</a></li>
+                    <li><a href="shop.html" style="text-decoration:none; color:var(--text-dark);">Shop</a></li>
                 </ul>
             </div>
         </div>
-        <div class="footer-bottom">
-            &copy; 2026 Lila Cloth. All Rights Reserved.
-        </div>
+        <div class="footer-bottom">&copy; 2026 Lila Cloth. All Rights Reserved.</div>
     </footer>
 
     <script>
         let products = {{ products | tojson }};
+        let currentFilter = "all";
+        let currentSearch = "";
 
         document.addEventListener("DOMContentLoaded", () => {
             renderProducts();
             setupTabs();
         });
 
-        let currentFilter = "all";
-        let currentSearch = "";
-
-        const subTabs = document.querySelectorAll('.sub-tab');
-        subTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                subTabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                currentFilter = this.getAttribute('data-filter');
-                renderProducts();
+        function setupTabs() {
+            const subTabs = document.querySelectorAll('.sub-tab');
+            subTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    subTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    renderProducts();
+                });
             });
-        });
+        }
 
         function renderProducts() {
             const container = document.getElementById('productsList');
             if (!container) return;
 
-            let filtered = products;
+            let filtered = products.filter(p => p.product_status !== "REJECTED");
 
             if (currentFilter !== "all") {
                 filtered = filtered.filter(p => p.product_status === currentFilter);
@@ -564,21 +456,16 @@
             container.innerHTML = filtered.map(product => `
                 <div class="product-item" data-id="${product.product_id}">
                     <div class="product-photo">
-                        <img src="/static/images/${product.photo}" alt="${product.product_title}">
+                        <img src="/static/images/${product.photo}" alt="${product.product_title}" onerror="this.src='https://via.placeholder.com/180'">
                     </div>
-
                     <div class="product-info">
                         <div class="product-title">${product.product_title}</div>
-
                         <div class="product-details">
-                            <strong>Name:</strong> ${product.product_title}<br>
                             <strong>Description:</strong> ${product.description}<br>
                             <strong>Price:</strong> ${product.unit_price} EGP<br>
-                            <strong>Quantity:</strong> ${product.stock_qty}<br>
-                            <strong>Supplier:</strong> ${product.supplier_id}
+                            <strong>Stock:</strong> ${product.stock_qty}
                         </div>
                     </div>
-
                     <div class="product-right">
                         <span class="status-badge ${product.product_status === 'APPROVED' ? 'status-approved' : 'status-pending'}">
                             ${product.product_status}
@@ -597,104 +484,46 @@
 
         async function approveProduct(id) {
             try {
-                const response = await fetch(`/admin-dashboard/products/${id}/approve`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    alert(err.message || "Failed to approve product");
-                    return;
+                const response = await fetch(`/admin-dashboard/products/${id}/approve`, { method: "PATCH" });
+                if (response.ok) {
+                    const product = products.find(p => p.product_id === id);
+                    if (product) product.product_status = "APPROVED";
+                    renderProducts();
                 }
-
-                const product = products.find(p => p.product_id === id);
-                if (product) {
-                    product.product_status = "APPROVED";
-                }
-
-                renderProducts();
-
-            } catch (error) {
-                console.error(error);
-                alert("Server error while approving product");
-            }
+            } catch (error) { console.error(error); }
         }
 
         async function rejectProduct(id) {
             try {
-                const response = await fetch(`/admin-dashboard/products/${id}/reject`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    alert(err.message || "Failed to reject product");
-                    return;
+                const response = await fetch(`/admin-dashboard/products/${id}/reject`, { method: "PATCH" });
+                if (response.ok) {
+                    products = products.filter(p => p.product_id !== id);
+                    renderProducts();
                 }
-
-                // update UI locally
-                const product = products.find(p => p.product_id === id);
-                if (product) {
-                    product.product_status = "REJECTED";
-                }
-
-                renderProducts();
-
-            } catch (error) {
-                console.error(error);
-                alert("Server error while rejecting product");
-            }
+            } catch (error) { console.error(error); }
         }
 
         async function deleteProduct(id) {
+            if(!confirm("Are you sure?")) return;
             try {
-                const response = await fetch(`/admin-dashboard/products/${id}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    alert(err.message || "Failed to delete product");
-                    return;
+                const response = await fetch(`/admin-dashboard/products/${id}`, { method: "DELETE" });
+                if (response.ok) {
+                    products = products.filter(p => p.product_id !== id);
+                    renderProducts();
                 }
-
-                products = products.filter(p => p.product_id !== id);
-
-                renderProducts();
-
-            } catch (error) {
-                console.error(error);
-                alert("Server error while deleting product");
-            }
+            } catch (error) { console.error(error); }
         }
-
-        
 
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
-        
+
         function performSearch() {
             currentSearch = searchInput.value;
             renderProducts();
         }
-        
-        searchBtn.addEventListener('click', performSearch);
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
 
-        renderProducts();
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
     </script>
 </body>
 </html>

@@ -314,7 +314,7 @@
     <nav class="navbar">
       <div class="logo">
         <a href="index.html">
-          <img src="Image/Logo.png" alt="Lila Cloth Logo" />
+          <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo" />
         </a>
       </div>
     </nav>
@@ -376,9 +376,8 @@
 
             <p class="signup-text">
               You don't have an account?
-              <a href="register.html">Sign up here</a>
+              <a href="/auth/register">Sign up here</a>
             </p>
-
             <div id="loginError" class="error-message">{{ server_error or '' }}</div>
 
             <div class="submit-wrapper">

@@ -30,12 +30,11 @@ class Product(db.Model):
     
     def __repr__(self):
         return f'<Product {self.product_title} - ${self.unit_price}>'
-    
+
     def to_dict(self):
-        """Convert product to dictionary"""
         return {
             'product_id': self.product_id,
-            'supplier_id': self.supplier_id,
+            'supplier_email': self.supplier.email if self.supplier else "N/A",
             'product_title': self.product_title,
             'photo': self.photo,
             'description': self.description,
