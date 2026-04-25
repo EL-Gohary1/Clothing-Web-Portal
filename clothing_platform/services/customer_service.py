@@ -1,5 +1,5 @@
 from models import db
-from models.product_model import Product, ProductStatus, StockStatus
+from models.product_model import Product, ProductStatus
 from models.cart_model import Cart, CartProduct
 from models.order_model import Order, OrderProduct
 from models.user_model import User
@@ -12,10 +12,9 @@ def get_approved_products():
         if not products:
             return {"message": "No products available", "products": []}, 200
 
-        return {
-            "message": "Products retrieved successfully",
-            "products": [product.to_dict() for product in products],
-        }, 200
+        return {"message": "Products retrieved successfully", 
+                "products": [product.to_dict() for product in products],
+                }, 200
 
     except Exception as exc:
         return {"message": "Error retrieving products", "error": str(exc)}, 500
@@ -26,15 +25,17 @@ def add_to_cart(customer_id, payload):
         product_id = payload.get("product_id")
         quantity = payload.get("quantity", 1)
 
-        if not product_id or quantity <= 0:  
+        if not product_id or quantity <= 0: #backend validation
             return {
                 "message": "Invalid product_id or quantity",
                 "error": "product_id and quantity (positive) are required",
             }, 400
 
+        #backend Validation
         product = Product.query.filter_by(
             product_id=product_id, product_status=ProductStatus.APPROVED
         ).first()
+
 
         if not product:
             return {
@@ -42,24 +43,28 @@ def add_to_cart(customer_id, payload):
                 "error": f"Product {product_id} is not available",
             }, 404
 
+        # Check stock
         if product.stock_qty < quantity:
             return {
                 "message": "Insufficient stock",
                 "error": f"Only {product.stock_qty} items available",
             }, 400
 
+        # Get or create customer cart
         cart = Cart.query.filter_by(customer_id=customer_id).first()
 
         if not cart:
             cart = Cart(customer_id=customer_id)
             db.session.add(cart)
-            db.session.flush()  
+            db.session.flush()  # Get cart_id without committing
 
+        # Check if product already in cart
         cart_product = CartProduct.query.filter_by(
             cart_id=cart.cart_id, product_id=product_id
         ).first()
 
         if cart_product:
+            # Update quantity
             new_quantity = cart_product.quantity + quantity
             if product.stock_qty < new_quantity:
                 return {
@@ -68,6 +73,7 @@ def add_to_cart(customer_id, payload):
                 }, 400
             cart_product.quantity = new_quantity
         else:
+            # Add new product to cart
             cart_product = CartProduct(
                 cart_id=cart.cart_id, product_id=product_id, quantity=quantity
             )
@@ -101,46 +107,55 @@ def get_customer_cart(customer_id):
 
 
 def update_cart_quantity(customer_id, product_id, payload):
-    quantity = payload.get("quantity")
+        quantity = payload.get("quantity")
 
-    if not quantity or quantity <= 0:
-        return {"message": "Invalid quantity"}, 400
+        if not quantity or quantity <= 0:
+            return {"message": "Invalid quantity"}, 400
 
-    cart = Cart.query.filter_by(customer_id=customer_id).first()
-    if not cart:
-        return {"message": "Cart not found"}, 404
+        cart = Cart.query.filter_by(customer_id=customer_id).first()
+        if not cart:
+            return {"message": "Cart not found"}, 404
 
-    cart_product = CartProduct.query.filter_by(
-        cart_id=cart.cart_id, product_id=product_id
-    ).first()
+        cart_product = CartProduct.query.filter_by(
+            cart_id=cart.cart_id,
+            product_id=product_id
+        ).first()
 
-    if not cart_product:
-        return {"message": "Product not in cart"}, 404
+        if not cart_product:
+            return {"message": "Product not in cart"}, 404
 
-    product = Product.query.get(product_id)
+        product = Product.query.get(product_id)
 
-    if product.stock_qty < quantity:
-        return {"message": "Insufficient stock"}, 400
+        if product.stock_qty < quantity:
+            return {"message": "Insufficient stock"}, 400
 
-    cart_product.quantity = quantity
+        cart_product.quantity = quantity
 
-    db.session.commit()
+        db.session.commit()
 
-    return {"message": "Updated successfully", "new_quantity": quantity}, 200
+        return {
+            "message": "Updated successfully",
+            "new_quantity": quantity
+        }, 200
 
-
+    
+    
 def remove_from_cart(customer_id, product_id, clear_all=False):
+    """Remove product from cart or clear entire cart"""
     try:
+        # Get cart
         cart = Cart.query.filter_by(customer_id=customer_id).first()
 
         if not cart:
             return {"message": "Cart not found", "error": "Customer has no cart"}, 404
 
         if clear_all:
+            # Remove all items from cart
             CartProduct.query.filter_by(cart_id=cart.cart_id).delete()
             db.session.commit()
             return {"message": "Cart cleared successfully"}, 200
 
+        # Remove specific product
         cart_product = CartProduct.query.filter_by(
             cart_id=cart.cart_id, product_id=product_id
         ).first()
@@ -166,6 +181,7 @@ def remove_from_cart(customer_id, product_id, clear_all=False):
 
 
 def checkout(customer_id, payload):
+    """Place order from cart (checkout)"""
     try:
         required_fields = [
             "delivery_address",
@@ -181,10 +197,12 @@ def checkout(customer_id, payload):
                     "error": f"{field} is required",
                 }, 400
 
+        # Get customer
         customer = User.query.get(customer_id)
         if not customer:
             return {"message": "Customer not found", "error": "Invalid customer"}, 404
 
+        # Get cart
         cart = Cart.query.filter_by(customer_id=customer_id).first()
 
         if not cart or not cart.get_items():
@@ -193,6 +211,7 @@ def checkout(customer_id, payload):
                 "error": "Cannot checkout with empty cart",
             }, 400
 
+        # Calculate total and verify stock
         cart_items = cart.get_items()
         total_price = 0
         order_details = []
@@ -200,6 +219,7 @@ def checkout(customer_id, payload):
         for item in cart_items:
             product = item.product
 
+            # Verify stock before creating order
             if product.stock_qty < item.quantity:
                 db.session.rollback()
                 return {
@@ -219,6 +239,7 @@ def checkout(customer_id, payload):
                 }
             )
 
+        # Create order
         order = Order(
             customer_id=customer_id,
             delivery_address=payload.get("delivery_address"),
@@ -229,14 +250,16 @@ def checkout(customer_id, payload):
         )
 
         db.session.add(order)
-        db.session.flush()  
+        db.session.flush()  # Get order_id
 
+        # Add order products and update stock
         supplier_emails = set()
 
         for item in cart_items:
             product = item.product
             supplier_emails.add(product.supplier.email)
 
+            # Create order product
             order_product = OrderProduct(
                 order_id=order.order_id,
                 product_id=product.product_id,
@@ -248,9 +271,11 @@ def checkout(customer_id, payload):
             )
             db.session.add(order_product)
 
+            # Update product stock
             product.stock_qty -= item.quantity
             product.update_stock_status()
 
+        # Clear cart
         CartProduct.query.filter_by(cart_id=cart.cart_id).delete()
 
         db.session.commit()
@@ -276,7 +301,8 @@ def checkout(customer_id, payload):
         return {"message": "Error placing order", "error": str(exc)}, 500
 
 
-def view_order_history(customer_id):
+def get_customer_order_history(customer_id):
+    """Get customer's order history"""
     try:
         orders = (
             Order.query.filter_by(customer_id=customer_id)
@@ -296,3 +322,24 @@ def view_order_history(customer_id):
     except Exception as exc:
         return {"message": "Error retrieving orders", "error": str(exc)}, 500
 
+
+def get_order_details(customer_id, order_id):
+    """Get specific order details (verify customer owns the order)"""
+    try:
+        order = Order.query.filter_by(
+            order_id=order_id, customer_id=customer_id
+        ).first()
+
+        if not order:
+            return {
+                "message": "Order not found",
+                "error": f"Order {order_id} does not exist or does not belong to you",
+            }, 404
+
+        return {
+            "message": "Order retrieved successfully",
+            "order": order.to_dict(),
+        }, 200
+
+    except Exception as exc:
+        return {"message": "Error retrieving order", "error": str(exc)}, 500

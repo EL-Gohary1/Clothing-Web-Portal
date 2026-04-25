@@ -228,18 +228,16 @@
       const logoutBtn = document.getElementById("logoutBtn");
 
       const userNameInput = document.getElementById("userName");
-      const userEmailInput = document.getElementById("userEmail");
-
-      const inputs = document.querySelectorAll(".info-group input");
 
       editBtn.addEventListener("click", () => {
-        inputs.forEach((input) => (input.readOnly = false));
+        userNameInput.readOnly = false;
         userNameInput.focus();
+
         editBtn.style.visibility = "hidden";
       });
 
       doneBtn.addEventListener("click", async () => {
-        inputs.forEach((input) => (input.readOnly = true));
+        userNameInput.readOnly = true;
         editBtn.style.visibility = "visible";
 
         const updatedData = {
@@ -248,7 +246,7 @@
 
         try {
           const res = await fetch("/auth/profile", {
-            method: "PUT", 
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
@@ -276,7 +274,7 @@
           });
 
           if (res.ok) {
-            window.location.href = "/auth/login";
+            window.parent.location.href = "/auth/login";
           } else {
             alert("Logout failed");
           }

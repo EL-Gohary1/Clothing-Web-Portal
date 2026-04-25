@@ -7,9 +7,6 @@ from services.customer_service import (
     update_cart_quantity,
     remove_from_cart,
     checkout,
-    view_order_history,
-    view_order_details
-
 )
 
 customer_bp = Blueprint("customer", __name__, url_prefix="/customer")
@@ -111,7 +108,7 @@ def place_order():
 def get_customer_orders():
     from services.customer_service import get_customer_order_history
 
-    body, status_code = view_order_history(g.current_user.user_id)
+    body, status_code = get_customer_order_history(g.current_user.user_id)
     if status_code == 200: 
         return render_template("order-page.html", orders=body.get("orders", []), user=g.current_user)
     else:

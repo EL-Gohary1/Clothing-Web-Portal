@@ -21,9 +21,15 @@ class Order(db.Model):
 
     def to_dict(self):
         items = self.get_items()
+
+        supplier_emails = list(
+            set([item.supplier_email_at_purchase for item in items if item.supplier_email_at_purchase]))
+
         return {
             'order_id': self.order_id,
             'customer_id': self.customer_id,
+            'customer_email': items[0].customer_email if items else "N/A",
+            'supplier_emails': supplier_emails,
             'delivery_city': self.delivery_city,
             'delivery_address': self.delivery_address,
             'receiver_name': self.receiver_name,
@@ -35,7 +41,8 @@ class Order(db.Model):
                 'product_title': item.product.product_title,
                 'quantity': item.quantity,
                 'unit_price': item.unit_price,
-                'subtotal': item.subtotal
+                'subtotal': item.subtotal,
+                'supplier_email': item.supplier_email_at_purchase
             } for item in items]
         }
 
