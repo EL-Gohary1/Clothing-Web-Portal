@@ -2,8 +2,6 @@ from models import db, User, UserRole
 from models.product_model import Product, ProductStatus, StockStatus
 from models.order_model import Order, OrderProduct
 
-
-
 def get_own_products(supplier_id, status_filter=None):
     query = Product.query.filter_by(supplier_id=supplier_id)
 
@@ -17,7 +15,6 @@ def get_own_products(supplier_id, status_filter=None):
     products = query.all()
     return {'products': [p.to_dict() for p in products], 'count': len(products)}, 200
 
-
 def search_own_products(supplier_id, keyword):
     if not keyword or not keyword.strip():
         return {'error': 'keyword is required'}, 400
@@ -29,8 +26,7 @@ def search_own_products(supplier_id, keyword):
     ).all()
     return {'products': [p.to_dict() for p in products], 'count': len(products)}, 200
 
-
-def submit_product(supplier_id, payload): 
+def submit_product(supplier_id, payload):
     product_title = (payload.get('product_title') or '').strip()
     unit_price = payload.get('unit_price')
     description = (payload.get('description') or '').strip()
@@ -66,7 +62,6 @@ def submit_product(supplier_id, payload):
     db.session.commit()
     return {'message': 'product submitted for review', 'product': product.to_dict()}, 201
 
-
 def remove_own_product(supplier_id, product_id):
     product = Product.query.get(product_id)
     if not product:
@@ -78,7 +73,6 @@ def remove_own_product(supplier_id, product_id):
     db.session.delete(product)
     db.session.commit()
     return {'message': f'product {product_id} removed successfully'}, 200
-
 
 def get_orders_with_own_products(supplier_id):
     supplier_product_ids = [

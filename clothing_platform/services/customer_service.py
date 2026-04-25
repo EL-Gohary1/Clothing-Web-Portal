@@ -1,5 +1,5 @@
 from models import db
-from models.product_model import Product, ProductStatus, StockStatus
+from models.product_model import Product, ProductStatus
 from models.cart_model import Cart, CartProduct
 from models.order_model import Order, OrderProduct
 from models.user_model import User
