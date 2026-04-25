@@ -375,18 +375,16 @@
             const container = document.getElementById('ordersList');
             if (!container) return;
 
+            if (orders.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:12px;">No orders found.</div>`;
+                return;
+            }
+
             container.innerHTML = orders.map(order => `
                 <div class="order-item" data-id="${order.order_id}">
                     <div class="order-info">
                         <div class="order-title">Order ID: ${order.order_id}</div>
-                        <div class="order-details">
-                            <strong>Customer Email:</strong> ${order.customer_email} <br>
-
-                            <strong>Suppliers:</strong> ${order.supplier_emails.join(', ')} <br>
-                            
-                            <strong>Receiver:</strong> ${order.receiver_name} <br>
-                            <strong>Total:</strong> <span style="font-weight:bold; color:var(--primary-purple);">${order.total_price} EGP</span>
-                        </div>
+                        <div class="order-details">Customer ID: ${order.customer_id}, Receiver: ${order.receiver_name}, Total: ${order.total_price} EGP </div>
                     </div>
                 </div>
             `).join('');

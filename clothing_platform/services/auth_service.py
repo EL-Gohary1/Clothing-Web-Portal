@@ -44,6 +44,7 @@ def login_user(payload, flask_session):
     email = _normalize_email(payload.get("email"))
     password = payload.get("password") or ""
 
+    # SRS-FN-login-004: Validate empty fields with specific messages
     if not email:
         return {"error": "Email is Required"}, 400
 
@@ -51,6 +52,7 @@ def login_user(payload, flask_session):
         return {"error": "Password is Required"}, 400
 
     user = User.query.filter_by(email=email).first()
+    # SRS-FN-login-004: Invalid credentials error message
     if not user or not user.password == password:
         return {"error": "Invalid email or password"}, 401
 
@@ -60,7 +62,7 @@ def login_user(payload, flask_session):
     return {
         "message": "login successful",
         "user": user.to_dict(),
-        "role": user.role.value,
+        "role": user.role.value,  # Include role for SRS-FN-login-003
     }, 200
 
 
