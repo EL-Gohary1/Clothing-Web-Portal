@@ -51,7 +51,7 @@ class CartProduct(db.Model):
 
     # Relationships
     cart = db.relationship('Cart', backref='cart_products')
-    product = db.relationship('Product', backref='cart_products')
+    product = db.relationship('Product', backref=db.backref('cart_products', cascade='all, delete-orphan'))
 
     def __repr__(self):
         return f'<CartProduct cart={self.cart_id} product={self.product_id} qty={self.quantity}>'

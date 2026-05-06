@@ -4,81 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lila Cloth - Supplier Products</title>
-    <style>
-        :root {
-            --primary-pink: #ff8eb2;
-            --primary-purple: #c29fff;
-            --primary-blue: #8edfff;
-            --text-dark: #4a4a4a;
-            --bg-light: #fefefe;
-            --nav-height: 80px;
-        }
-
-        * { margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; box-sizing: border-box; }
-        body { background-color: #f5f7fa; min-height: 100vh; display: flex; flex-direction: column; }
-
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            height: var(--nav-height); padding: 0 5%; background-color: white;
-            border-bottom: 3px solid;
-            border-image: linear-gradient(to right, var(--primary-pink), var(--primary-purple), var(--primary-blue)) 1;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-        .logo img { height: 60px; width: auto; }
-        .profile-section { display: flex; align-items: center; gap: 12px; }
-        .supplier-name { color: var(--primary-purple); font-weight: bold; }
-        .profile-icon {
-            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
-            padding: 8px 18px; border-radius: 30px; font-size: 0.85rem;
-            color: white; text-decoration: none; transition: 0.2s;
-        }
-
-        .actions-bar {
-            margin: 30px 5%;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .search-container { grid-column: 2; display: flex; gap: 10px; width: 450px; }
-        .search-input { width: 100%; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; outline: none; }
-        .search-input:focus { border-color: var(--primary-purple); }
-        .search-btn, .add-product-btn {
-            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
-            color: white; border: none; padding: 10px 24px; border-radius: 30px;
-            cursor: pointer; text-decoration: none; font-size: 0.85rem; font-weight: 500;
-        }
-        .add-product-btn { grid-column: 3; justify-self: end; }
-
-        .tabs { display: flex; margin: 0 5% 20px 5%; border-bottom: 1px solid #ddd; }
-        .tab { padding: 10px 25px; text-decoration: none; color: var(--text-dark); font-weight: 500; }
-        .tab.active { color: var(--primary-purple); border-bottom: 3px solid var(--primary-purple); }
-
-        .sub-tabs { margin: 0 5% 25px 5%; display: flex; gap: 10px; }
-        .sub-tab { padding: 8px 24px; border: none; border-radius: 30px; cursor: pointer; background: #f0f0f0; transition: 0.2s; }
-        .sub-tab.active { background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple)); color: white; }
-
-        .products-container { flex: 1; margin: 0 5% 40px 5%; }
-        .product-item {
-            background: white; padding: 20px 25px; margin-bottom: 15px;
-            border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; gap: 20px;
-        }
-        .product-photo img { width: 150px; height: 150px; object-fit: cover; border-radius: 12px; }
-        .product-info { flex: 2; }
-        .product-title { font-weight: bold; font-size: 1.1rem; color: var(--text-dark); margin-bottom: 8px; }
-        .product-details { color: #555; font-size: 0.9rem; line-height: 1.6; }
-
-        .product-right { display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
-        .status-badge { padding: 5px 15px; border-radius: 30px; font-size: 0.75rem; font-weight: bold; }
-        .status-approved { background: #d4edda; color: #155724; }
-        .status-pending { background: #fff3cd; color: #856404; }
-
-        .delete-icon { background: none; border: none; cursor: pointer; font-size: 1.3rem; color: #ff4444; padding: 5px; }
-
-        footer { background: white; padding: 30px 5%; text-align: center; border-top: 1px solid #eee; margin-top: auto; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
@@ -114,7 +40,7 @@
 
     <div class="products-container" id="productsList"></div>
 
-    <footer>&copy; 2026 Lila Cloth. All Rights Reserved.</footer>
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
         const API_BASE = "/supplier-dhashboard";

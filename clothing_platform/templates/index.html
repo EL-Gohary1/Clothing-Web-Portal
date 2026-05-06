@@ -3,209 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/static/Global.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <title>Lila Cloth</title>
-    <style>
-      body {
-        background-color: var(--bg-light);
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-
-      /* Iframe Styles */
-      .nav-frame {
-        width: 100%;
-        height: 85px;
-        border: none;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        background: white;
-      }
-
-      .footer-frame {
-        width: 100%;
-        height: 320px;
-        border: none;
-        margin-top: auto;
-      }
-
-      .search-container {
-        margin: 40px 5%;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-      }
-
-      .search-input {
-        width: 400px;
-        padding: 12px 20px;
-        border: 1px solid #ddd;
-        border-radius: 30px;
-        font-size: 0.9rem;
-        outline: none;
-        transition: 0.2s;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-      }
-
-      .search-input:focus {
-        border-color: #c29fff;
-      }
-
-      .search-btn {
-        background: linear-gradient(135deg, #ff8eb2, #c29fff);
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 30px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-      }
-
-      .search-btn:hover {
-        opacity: 0.9;
-      }
-
-      .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-        padding: 0 5% 60px 5%;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      .card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        border: 1px solid #eee;
-        transition:
-          transform 0.3s,
-          box-shadow 0.3s;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      }
-
-      .photo-area {
-        width: 100%;
-        height: 320px;
-        background-color: #f9f9f9;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-      }
-
-      .photo-area img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .card-details {
-        padding: 20px;
-      }
-
-      .card-details .name {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 5px;
-      }
-
-      .card-details .desc {
-        font-size: 0.9rem;
-        color: #777;
-        margin-bottom: 15px;
-        height: 40px;
-      }
-
-      .card-details .price {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: var(--primary-purple);
-        margin-bottom: 5px;
-      }
-
-      .info-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.85rem;
-        color: #888;
-        margin-bottom: 15px;
-        padding: 0 10px;
-      }
-
-      .quantity-selector {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-
-      .qty-btn {
-        width: 30px;
-        height: 30px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        background: white;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.2s;
-      }
-
-      .qty-btn:hover {
-        background: #f0f0f0;
-        border-color: var(--primary-pink);
-      }
-
-      .add-to-cart {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 12px;
-                background: linear-gradient(135deg, #ff8eb2, #c29fff);
-
-        color: white;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-
-      .add-to-cart:hover {
-        opacity: 0.9;
-        transform: scale(1.02);
-      }
-
-      @media (max-width: 600px) {
-        .product-grid {
-          grid-template-columns: 1fr;
-        }
-        .search-container {
-          flex-direction: column;
-          padding: 0 20px;
-        }
-        .search-input {
-          width: 100%;
-        }
-      }
-    </style>
   </head>
   <body>
     <!-- shared navbar -->
-    <iframe src="{{ '/static/customer-nav-bar.html' if user else '/static/nav-bar.html' }}" class="nav-frame" scrolling="no"></iframe>
+    <iframe src="/static/customer-nav-bar.html" class="nav-frame" scrolling="no"></iframe>
 
     <main>
       <div class="search-container">
@@ -219,29 +23,6 @@
       </div>
 
       <section class="product-grid" id="productGrid">
-       <!---<div class="card">
-          <div class="photo-area">
-            <img src="Image/stripped pullover.jfif" alt="Dress" />
-          </div>
-          <div class="card-details">
-            <div class="name">striped pullover</div>
-            <div class="desc">Elegant winter pullover with cotton fabric.</div>
-            <div class="price">$89.00</div>
-            <div class="info-row">
-              <span>Stock: 12 items</span>
-            </div>
-            <div class="info-row">
-              <span>Supplier: Lila Luxe</span>
-            </div>
-            <div class="quantity-selector">
-              <button class="qty-btn minus">-</button>
-              <span class="qty-val">1</span>
-              <button class="qty-btn plus">+</button>
-            </div>
-            <button onclick="addToCart(${product.product_id})">Add to Cart</button>
-          </div>
-        </div> -->
-
       </section>
     </main>
 
@@ -255,7 +36,6 @@ function renderProducts() {
     const container = document.getElementById("productGrid");
     if (!container) return;
 
-    // تأكد أن المتغير products موجود وله قيمة
     if (typeof products === 'undefined' || !products || products.length === 0) {
         container.innerHTML = "<p style='text-align:center; width:100%;'>No products available</p>";
         return;

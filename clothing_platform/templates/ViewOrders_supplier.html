@@ -4,74 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lila Cloth - Supplier Orders</title>
-    <style>
-        :root {
-            --primary-pink: #ff8eb2;
-            --primary-purple: #c29fff;
-            --primary-blue: #8edfff;
-            --text-dark: #4a4a4a;
-            --bg-light: #fefefe;
-            --nav-height: 80px;
-        }
-
-        * { margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; box-sizing: border-box; }
-        body { background-color: #f5f7fa; min-height: 100vh; display: flex; flex-direction: column; }
-
-        /* Navbar */
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            height: var(--nav-height); padding: 0 5%; background-color: white;
-            border-bottom: 3px solid;
-            border-image: linear-gradient(to right, var(--primary-pink), var(--primary-purple), var(--primary-blue)) 1;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-        .logo img { height: 60px; width: auto; }
-        .profile-section { display: flex; align-items: center; gap: 12px; }
-        .supplier-name { color: var(--primary-purple); font-weight: bold; }
-        .profile-icon {
-            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
-            padding: 8px 18px; border-radius: 30px; font-size: 0.85rem;
-            color: white; text-decoration: none; transition: 0.2s;
-        }
-
-        .actions-bar { margin: 30px 5% 10px 5%; display: flex; justify-content: flex-end; }
-        .add-product-btn {
-            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
-            color: white; border: none; padding: 10px 24px; border-radius: 30px;
-            cursor: pointer; text-decoration: none; font-size: 0.85rem; font-weight: 500;
-        }
-
-        .tabs { display: flex; margin: 0 5% 20px 5%; border-bottom: 1px solid #ddd; }
-        .tab { padding: 10px 25px; text-decoration: none; color: var(--text-dark); font-weight: 500; }
-        .tab.active { color: var(--primary-purple); border-bottom: 3px solid var(--primary-purple); }
-
-        .orders-container { flex: 1; margin: 0 5% 40px 5%; }
-        .order-card {
-            background: white; padding: 20px; margin-bottom: 20px;
-            border-radius: 15px; border: 1px solid #eee;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
-        .order-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 15px; border-bottom: 1px dashed #eee; margin-bottom: 15px;
-        }
-        .order-id { font-weight: bold; color: var(--text-dark); font-size: 1.1rem; }
-        .order-date { font-size: 0.85rem; color: #888; }
-
-        .customer-info { margin-bottom: 15px; font-size: 0.9rem; line-height: 1.6; }
-        .customer-info strong { color: var(--primary-purple); }
-
-        .items-list { background: #f9f9fb; padding: 15px; border-radius: 10px; }
-        .item-row {
-            display: flex; justify-content: space-between; font-size: 0.9rem;
-            padding: 8px 0; border-bottom: 1px solid #edf0f2;
-        }
-        .item-row:last-child { border-bottom: none; }
-
-        .currency { color: var(--primary-pink); font-size: 0.8rem; margin-left: 4px; }
-
-        footer { background: white; padding: 30px 5%; text-align: center; border-top: 1px solid #eee; margin-top: auto; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
@@ -97,9 +30,7 @@
     <div class="orders-container" id="ordersList">
         </div>
 
-    <footer>
-        &copy; 2026 Lila Cloth. All Rights Reserved.
-    </footer>
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
         const API_BASE = "/supplier-dhashboard";

@@ -59,7 +59,6 @@ class OrderProduct(db.Model):
     customer_email = db.Column(db.String(120))
 
     order = db.relationship('Order', backref='order_products')
-    product = db.relationship('Product', backref='order_products')
-
+    product = db.relationship('Product', backref=db.backref('order_products', cascade='all, delete-orphan'))
     def __repr__(self):
         return f'<OrderProduct order={self.order_id} product={self.product_id}>'

@@ -3,183 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="/static/Global.css" />
-
     <title>My Profile | Lila Cloth</title>
-    <style>
-      /* Iframe Styles */
-      .nav-frame {
-        width: 100%;
-        height: 85px;
-        border: none;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        background: white;
-      }
-
-      .footer-frame {
-        width: 100%;
-        height: 320px;
-        border: none;
-        margin-top: auto;
-      }
-
-      .main-content {
-        flex: 1;
-        padding: 40px 5%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .profile-card {
-        width: 100%;
-        max-width: 700px;
-        background: white;
-        border: 2px solid #e0e0e0;
-        border-radius: 20px;
-        padding: 40px;
-        position: relative;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
-      }
-
-      .welcome-msg {
-        text-align: center;
-        font-size: 1.6rem;
-        color: var(--text-dark);
-        margin-bottom: 40px;
-        font-weight: 500;
-      }
-
-      .edit-btn {
-        position: absolute;
-        top: 30px;
-        right: 30px;
-        padding: 8px 25px;
-        border: 1.5px solid var(--primary-purple);
-        background: white;
-        color: var(--primary-purple);
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: 0.3s;
-      }
-
-      .edit-btn:hover {
-        background: var(--primary-purple);
-        color: white;
-      }
-
-      .info-group {
-        display: flex;
-        align-items: center;
-        margin-bottom: 25px;
-        justify-content: center;
-      }
-
-      .info-group label {
-        width: 120px;
-        font-size: 1.2rem;
-        color: var(--text-dark);
-        margin-right: 15px;
-        text-transform: lowercase;
-      }
-
-      .info-group input {
-        flex: 1;
-        max-width: 350px;
-        padding: 10px 20px;
-        border: 2px solid var(--primary-blue);
-        border-radius: 12px;
-        outline: none;
-        font-size: 1rem;
-        background-color: #fafafa;
-        color: var(--text-dark);
-        transition: all 0.3s ease;
-      }
-
-      /* Visual style when input is editable */
-      .info-group input:not([readonly]) {
-        background-color: #ffffff;
-        border-color: var(--primary-purple);
-        box-shadow: 0 0 8px rgba(128, 0, 128, 0.1);
-      }
-
-      .button-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 15px;
-        margin-top: 50px;
-      }
-
-      .logout-btn {
-        padding: 10px 25px;
-        border: 1.5px solid var(--primary-pink);
-        background: white;
-        color: var(--primary-pink);
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: 0.3s;
-      }
-
-      .logout-btn:hover {
-        background-color: var(--primary-pink);
-        color: white;
-      }
-
-      .done-btn {
-        padding: 10px 35px;
-        border: none;
-        background: linear-gradient(
-          to right,
-          var(--primary-pink),
-          var(--primary-purple)
-        );
-        color: white;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1.2rem;
-        font-weight: 500;
-        transition: 0.3s;
-      }
-
-      .done-btn:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-      }
-
-      @media (max-width: 600px) {
-        .profile-card {
-          padding: 20px;
-          padding-top: 60px;
-        }
-        .info-group {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .info-group label {
-          margin-bottom: 5px;
-        }
-        .info-group input {
-          width: 100%;
-          max-width: none;
-        }
-        .edit-btn {
-          top: 15px;
-          right: 15px;
-        }
-      }
-    </style>
   </head>
   <body>
     <!-- shared NAVBAR -->
-    <iframe
-      src={{ '/static/customer-nav-bar.html' if user else '/static/nav-bar.html' }}
-      class="nav-frame"
-      scrolling="no"
-    ></iframe>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo">
+        </div>
+    </nav>
 
     <main class="main-content">
       <div class="profile-card">
@@ -214,13 +48,7 @@
       </div>
     </main>
 
-    <!-- shared FOOTER -->
-    <iframe
-      src="/static/footer.html"
-      id="footer-iframe"
-      class="footer-frame"
-      scrolling="no"
-    ></iframe>
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
       const editBtn = document.getElementById("editBtn");

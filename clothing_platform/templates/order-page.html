@@ -3,107 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/static/Global.css" />
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>My Orders | Lila Cloth</title>
-    <style>
-      /* Iframe Styles */
-      .nav-frame {
-        width: 100%;
-        height: 85px;
-        border: none;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        background: white;
-      }
-
-      .footer-frame {
-        width: 100%;
-        height: 320px;
-        border: none;
-        margin-top: auto;
-      }
-
-      .main-content {
-        flex: 1;
-        padding: 40px 5%;
-        display: flex;
-        justify-content: center;
-      }
-
-      .orders-card {
-        width: 100%;
-        max-width: 1000px;
-        background: white;
-        border: 2px solid #e0e0e0;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
-      }
-
-      .orders-card h2 {
-        font-family: "Segoe UI", cursive, sans-serif;
-        color: var(--text-dark);
-        margin-bottom: 30px;
-        font-weight: 500;
-      }
-
-      .order-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 25px;
-        margin-bottom: 15px;
-        border: 1.5px solid #eee;
-        border-radius: 12px;
-        transition: 0.3s;
-        text-decoration: none;
-      }
-
-      .order-row:hover {
-        border-color: var(--primary-purple);
-        background-color: #fafafa;
-        transform: translateX(5px);
-      }
-
-      .order-info {
-        color: var(--primary-pink);
-        font-size: 1.1rem;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-      }
-
-      .order-info span {
-        margin: 0 10px;
-        color: #ddd;
-      }
-
-      .status-badge {
-        font-size: 0.85rem;
-        padding: 4px 12px;
-        border-radius: 20px;
-        background: var(--primary-blue);
-        color: white;
-        font-weight: bold;
-      }
-
-      @media (max-width: 600px) {
-        .orders-card {
-          padding: 15px;
-        }
-        .order-info {
-          font-size: 0.85rem;
-        }
-        .order-row {
-          padding: 12px;
-        }
-      }
-    </style>
   </head>
   <body>
     <!-- shared navbar -->
-    <iframe src={{ '/static/customer-nav-bar.html' if user else '/static/nav-bar.html' }} class="nav-frame" scrolling="no"></iframe>
+    <iframe src={{ '/static/customer-nav-bar.html'}} class="nav-frame" scrolling="no"></iframe>
 
     <main class="main-content">
       <div class="orders-card">
@@ -125,13 +30,6 @@
         {% endif %}
       </div>
     </main>
-
-    <!-- shared footer -->
-    <iframe
-      src="/static/footer.html"
-      id="footer-iframe"
-      class="footer-frame"
-      scrolling="no"
-    ></iframe>
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
   </body>
 </html>
