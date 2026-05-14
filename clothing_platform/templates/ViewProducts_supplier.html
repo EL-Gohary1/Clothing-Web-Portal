@@ -58,7 +58,7 @@
             let filteredProducts = products;
             if (currentSearch.trim() !== "") {
                 filteredProducts = products.filter(p =>
-                    p.product_title.toLowerCase().includes(currentSearch.toLowerCase())
+                    p.product_title.toLowerCase().trim() === currentSearch.toLowerCase().trim()
                 );
             }
 

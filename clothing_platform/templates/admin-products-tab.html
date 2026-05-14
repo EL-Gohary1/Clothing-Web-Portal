@@ -86,7 +86,7 @@
             }
 
             if (currentSearch) {
-                filtered = filtered.filter(p => p.product_title.toLowerCase().includes(currentSearch.toLowerCase()));
+                    filtered = filtered.filter(p => p.product_title.toLowerCase() === currentSearch.toLowerCase());            
             }
 
             if (filtered.length === 0) {

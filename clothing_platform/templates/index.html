@@ -118,11 +118,11 @@
       cards.forEach((card) => {
         const productName = card.querySelector(".name").innerText.toLowerCase();
 
-        if (productName.includes(query)) {
-          card.style.display = "flex";
-          foundCount++;
+        if (productName === query) { 
+            card.style.display = "flex";
+            foundCount++;
         } else {
-          card.style.display = "none";
+            card.style.display = "none";
         }
       });
 

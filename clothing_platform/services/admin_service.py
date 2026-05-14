@@ -144,12 +144,13 @@ def search_products(keyword):
     if not keyword or not keyword.strip():
         return {'error': 'keyword is required'}, 400
 
-    term = f'%{keyword.strip()}%'
+    term = keyword.strip()
+    
     products = Product.query.filter(
-        Product.product_title.ilike(term) | Product.description.ilike(term)
+        Product.product_title == term
     ).all()
+    
     return {'products': [p.to_dict() for p in products], 'count': len(products)}, 200
-
 
 def get_all_orders():
     orders = Order.query.order_by(Order.creation_date.desc()).all()
