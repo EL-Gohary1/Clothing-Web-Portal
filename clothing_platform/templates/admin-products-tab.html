@@ -139,7 +139,6 @@
         }
 
         async function deleteProduct(id) {
-            if(!confirm("Are you sure?")) return;
             try {
                 const response = await fetch(`/admin-dashboard/products/${id}`, { method: "DELETE" });
                 if (response.ok) {
