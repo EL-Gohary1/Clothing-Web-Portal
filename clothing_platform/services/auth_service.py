@@ -22,7 +22,7 @@ def register_user(payload):
         return {"error": f"invalid role. allowed roles: {allowed}"}, 400
 
     if User.query.filter_by(email=email).first():
-        return {"error": "email already registered"}, 409
+        return {"error": "email already exists"}, 409
 
     user = User(
         name=name,
