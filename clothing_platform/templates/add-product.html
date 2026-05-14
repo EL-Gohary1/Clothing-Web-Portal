@@ -55,7 +55,7 @@
             </div>
 
             <div class="form-actions">
-                <a href="/admin-dashboard/products" class="btn-back">Back</a>
+                <a class="btn-back" onclick="goBack()">Back</a>
                 <button class="btn-save" id="saveBtn" onclick="saveProduct()">Submit</button>
             </div>
         </div>
@@ -111,6 +111,13 @@
                 console.error(error);
                 saveBtn.disabled = false;
                 saveBtn.innerText = 'Submit';
+            }
+        }
+        function goBack() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = "/admin-dashboard/products";
             }
         }
     </script>

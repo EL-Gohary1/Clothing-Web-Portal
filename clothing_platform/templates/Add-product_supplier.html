@@ -46,7 +46,7 @@
             </div>
 
             <div class="form-actions">
-                <a href="/supplier-dhashboard/view-products" class="btn-back">Cancel</a>
+                <a class="btn-back" onclick="goBack()">Cancel</a>
                 <button class="btn-save" id="saveBtn" onclick="saveProduct()">Submit</button>
             </div>
         </div>
@@ -92,6 +92,13 @@
                 console.error('Error:', error);
                 saveBtn.disabled = false;
                 saveBtn.innerText = 'Submit';
+            }
+        }
+        function goBack() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = "/supplier-dhashboard/view-products";
             }
         }
     </script>

@@ -51,7 +51,7 @@
             </div>
 
             <div class="form-actions">
-                <a href="/admin-dashboard/customers" class="btn-back">Back</a>
+                <a class="btn-back" onclick="goBack()">Back</a>
                 <button class="btn-save" onclick="saveUser()">Save</button>
             </div>
         </div>
@@ -62,7 +62,6 @@
     <script>
         sessionStorage.setItem('lastPage', window.location.href);
 
-        /*check it again*/
         function clearEmailError() {
             document.getElementById('userEmail').classList.remove('error-input');
         }
@@ -108,11 +107,17 @@
                     return;
                 }
 
-                // success& redirect
                 window.location.href = "/admin-dashboard/customers";
 
             } catch (error) {
                 console.error(error);
+            }
+        }
+        function goBack() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = "/admin-dashboard/customers";
             }
         }
     </script>
