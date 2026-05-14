@@ -14,11 +14,8 @@
         </div>
         <div class="profile-section">
             <div class="welcome-text">
-                Welcome, <span class="admin-name">Admin's Name.</span>
+                Welcome, <span class="admin-name">{{user.name}}</span>
             </div>
-            <a href="/auth/profile">
-                <div class="profile-icon">Profile</div>
-            </a>
         </div>
     </nav>
 
@@ -39,7 +36,6 @@
             <div class="form-group" id="emailGroup">
                 <label>Email</label>
                 <input type="email" id="userEmail" placeholder="Enter Email">
-                <span class="error-message" id="emailError"></span>
             </div>
 
             <div class="form-group">
@@ -64,10 +60,11 @@
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
+        sessionStorage.setItem('lastPage', window.location.href);
 
+        /*check it again*/
         function clearEmailError() {
             document.getElementById('userEmail').classList.remove('error-input');
-            document.getElementById('emailError').textContent = '';
         }
 
         async function saveUser() {
@@ -79,15 +76,13 @@
             const role = document.querySelector('input[name="role"]:checked');
 
             if (!name || !password || !email || !role) {
-                alert('Required data');
+                alert('Enter Valid Data');
                 return;
             }
 
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
-                document.getElementById('userEmail').classList.add('error-input');
-                document.getElementById('emailError').textContent =
-                    'Please enter a valid email address';
+                alert('Enter Valid Data');
                 return;
             }
 
@@ -109,7 +104,7 @@
 
                 if (!response.ok) {
                     const err = await response.json();
-                    alert(err.message || "Error creating user");
+                    alert(err.error);
                     return;
                 }
 
@@ -118,7 +113,6 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Server error");
             }
         }
     </script>

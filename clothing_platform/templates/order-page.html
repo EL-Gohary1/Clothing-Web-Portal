@@ -8,7 +8,7 @@
   </head>
   <body>
     <!-- shared navbar -->
-    <iframe src={{ '/static/customer-nav-bar.html'}} class="nav-frame" scrolling="no"></iframe>
+    <iframe src="/customer-navbar" class="nav-frame" scrolling="no" frameborder="0"></iframe>
 
     <main class="main-content">
       <div class="orders-card">
@@ -31,5 +31,11 @@
       </div>
     </main>
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+      // Store the last visited page in sessionStorage
+      sessionStorage.setItem('lastPage', window.location.href);
+    </script>
+    
   </body>
 </html>

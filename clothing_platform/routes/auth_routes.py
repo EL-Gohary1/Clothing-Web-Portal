@@ -73,19 +73,3 @@ def update_profile():
     db.session.commit()
 
     return {"message": "Profile updated"}, 200
-# @auth_bp.get("/customer-area")
-# @role_required("CUSTOMER")
-# def customer_area():
-#     return jsonify({"message": f"Welcome customer {g.current_user.name}"}), 200
-
-
-# @auth_bp.get("/supplier-area")
-# @role_required("SUPPLIER")
-# def supplier_area():
-#     return jsonify({"message": f"Welcome supplier {g.current_user.name}"}), 200
-
-
-# @auth_bp.get("/admin-area")
-# @role_required("ADMIN")
-# def admin_area():
-#     return jsonify({"message": f"Welcome admin {g.current_user.name}"}), 200

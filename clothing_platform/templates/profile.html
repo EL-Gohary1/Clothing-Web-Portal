@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="/static/Global.css" />
     <title>My Profile | Lila Cloth</title>
   </head>
   <body>
@@ -84,14 +83,15 @@
           const data = await res.json();
 
           if (!res.ok) {
-            alert(data.message || "Failed to update profile");
+            console.error(data.message);
             return;
           }
-
-          alert("Profile updated successfully");
+          
+          const backTo = sessionStorage.getItem('lastPage') || "/";
+          window.top.location.href = backTo;              
+        
         } catch (err) {
           console.error(err);
-          alert("Error updating profile");
         }
       });
 
@@ -104,11 +104,10 @@
           if (res.ok) {
             window.parent.location.href = "/auth/login";
           } else {
-            alert("Logout failed");
+            console.error("Logout failed");
           }
         } catch (err) {
           console.error(err);
-          alert("Error logging out");
         }
       });
     </script>

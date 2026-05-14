@@ -130,18 +130,6 @@ def approve_product(product_id):
     return {'message': f'product {product_id} approved successfully', 'product': product.to_dict()}, 200
 
 
-def reject_product(product_id):
-    product = Product.query.get(product_id)
-    if not product:
-        return {'error': 'product not found'}, 404
-    if product.product_status == ProductStatus.REJECTED:
-        return {'message': 'product is already rejected', 'product': product.to_dict()}, 200
-
-    product.product_status = ProductStatus.REJECTED
-    db.session.commit()
-    return {'message': f'product {product_id} rejected successfully', 'product': product.to_dict()}, 200
-
-
 def remove_product(product_id):
     product = Product.query.get(product_id)
     if not product:

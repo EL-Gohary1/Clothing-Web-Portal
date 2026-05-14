@@ -13,7 +13,6 @@
         </div>
         <div class="profile-section">
             <div class="welcome-text">Welcome, <span class="supplier-name">{{ g.current_user.name if g.current_user else 'Supplier' }}</span></div>
-            <a href="/auth/profile" class="profile-icon">Profile</a>
         </div>
     </nav>
 
@@ -56,6 +55,7 @@
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
+        sessionStorage.setItem('lastPage', window.location.href);
         async function saveProduct() {
             const saveBtn = document.getElementById('saveBtn');
             const data = {

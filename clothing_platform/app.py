@@ -1,7 +1,8 @@
 import os
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, session
 from flask_migrate import Migrate
+from models.user_model import User
 from config import config
 from models import db
 from routes.auth_routes import auth_bp
@@ -36,6 +37,7 @@ def create_app(config_name=None):
     @app.get("/")
     def home():
         body, status_code = get_approved_products()
+        print("DEBUG -", body);
         if status_code == 200:
             return render_template(
                 "index.html", products=body["products"]
@@ -87,6 +89,16 @@ def create_app(config_name=None):
             return jsonify({'status': 'healthy'}), 200
         except Exception as exc:
             return jsonify({'status': 'unhealthy', 'error': str(exc)}), 500
+
+    @app.route('/customer-navbar')
+    def customer_navbar():
+        return render_template('customer-nav-bar.html')
+    
+    @app.context_processor
+    def inject_user():
+        user_id = session.get('user_id')
+        user = User.query.get(user_id) if user_id else None
+        return dict(user=user)
 
     return app
 

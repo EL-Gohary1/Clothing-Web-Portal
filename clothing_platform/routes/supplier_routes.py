@@ -17,10 +17,12 @@ def require_supplier():
 
 @supplier_bp.get('/view-products')
 def render_products_page():
-    return render_template('ViewProducts_supplier.html')
+    status_filter = request.args.get('status')
+    body, status = get_own_products(g.current_user.user_id, status_filter)
+    return render_template('ViewProducts_supplier.html', products=body.get('products', []))
 
 @supplier_bp.get('/products')
-def view_own_products():
+def get_filtered_products_api():
     status_filter = request.args.get('status')
     body, status = get_own_products(g.current_user.user_id, status_filter)
     return jsonify(body), status
@@ -42,14 +44,10 @@ def remove_product(product_id):
     body, status = remove_own_product(g.current_user.user_id, product_id)
     return jsonify(body), status
 
-@supplier_bp.get('/orders')
-def view_orders():
-    body, status = get_orders_with_own_products(g.current_user.user_id)
-    return jsonify(body), status
-
 @supplier_bp.get('/view-orders')
 def render_orders_page():
-    return render_template('ViewOrders_supplier.html')
+    body, status = get_orders_with_own_products(g.current_user.user_id)
+    return render_template('ViewOrders_supplier.html', orders=body.get('orders', []))
 
 @supplier_bp.get('/add-product')
 def render_add_product_page():

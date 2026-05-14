@@ -5,13 +5,11 @@ from . import db
 class ProductStatus(PyEnum):
     APPROVED = "APPROVED"
     PENDING = "PENDING"
-    REJECTED = "REJECTED"
 
 
 class StockStatus(PyEnum):
     IN_STOCK = "IN_STOCK"
     OUT_OF_STOCK = "OUT_OF_STOCK"
-    LOW_STOCK = "LOW_STOCK"
 
 
 # Product model
@@ -48,8 +46,6 @@ class Product(db.Model):
         """Automatically update stock status based on quantity"""
         if self.stock_qty == 0:
             self.stock_status = StockStatus.OUT_OF_STOCK
-        elif self.stock_qty < 10:  # Threshold for low stock
-            self.stock_status = StockStatus.LOW_STOCK
         else:
             self.stock_status = StockStatus.IN_STOCK
 

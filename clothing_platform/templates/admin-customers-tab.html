@@ -44,7 +44,9 @@
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
-        let customers = {{ customers | tojson }};
+        customers = {{ customers | tojson }};
+        sessionStorage.setItem('lastPage', window.location.href);
+
         function renderCustomers() {
             const container = document.getElementById('customersList');
             if (!container) return;
@@ -76,7 +78,7 @@
 
                 if (!response.ok) {
                     const err = await response.json();
-                    alert(err.message || "Failed to delete customer");
+                    console.error(err);
                     return;
                 }
 
@@ -86,7 +88,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Server error while deleting customer");
+                console.error("Server error while deleting customer");
             }
         }
 

@@ -13,7 +13,7 @@
             <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo">
         </div>
         <div class="profile-section">
-            <div class="welcome-text">Welcome, <span class="supplier-name">{{ g.current_user.name if g.current_user else 'Supplier' }}</span></div>
+            <div class="welcome-text">Welcome, <span class="supplier-name">{{user.name}}</span></div>
             <a href="/auth/profile" class="profile-icon">Profile</a>
         </div>
     </nav>
@@ -33,23 +33,10 @@
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
-        const API_BASE = "/supplier-dhashboard";
 
-        async function fetchOrders() {
-            const container = document.getElementById('ordersList');
-            try {
-                const response = await fetch(`${API_BASE}/orders`);
-                if (response.ok) {
-                    const data = await response.json();
-                    renderOrders(data.orders || []);
-                } else {
-                    container.innerHTML = `<div style="text-align:center; color:red; padding:20px;">Error loading data.</div>`;
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                container.innerHTML = `<div style="text-align:center; color:red; padding:20px;">Connection failed.</div>`;
-            }
-        }
+        sessionStorage.setItem('lastPage', window.location.href);
+        // Retrieve orders data passed from Flask
+        let orders = {{ orders | tojson }};
 
         function renderOrders(orders) {
             const container = document.getElementById('ordersList');
@@ -94,7 +81,8 @@
             `).join('');
         }
 
-        fetchOrders();
+        renderOrders(orders);
+
     </script>
 </body>
 </html>

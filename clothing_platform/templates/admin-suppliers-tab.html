@@ -45,7 +45,8 @@
 
     <script>
         let suppliers = {{ suppliers | tojson }};
-
+        sessionStorage.setItem('lastPage', window.location.href);
+    
         function renderSuppliers() {
             const container = document.getElementById('suppliersList');
             if (!container) return;

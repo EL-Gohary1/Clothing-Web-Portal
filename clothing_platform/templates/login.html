@@ -10,9 +10,7 @@
   <body>
     <nav class="navbar">
       <div class="logo">
-        <a href="index.html">
           <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo" />
-        </a>
       </div>
     </nav>
 
@@ -110,6 +108,8 @@
       const loginError = document.getElementById("loginError");
       const togglePasswordBtn = document.getElementById("togglePasswordBtn");
 
+      
+
       function togglePassword() {
         if (passwordInput.type === "password") {
           passwordInput.type = "text";
@@ -144,6 +144,10 @@
         const email = emailInput.value.trim().toLowerCase();
         const password = passwordInput.value.trim();
 
+        if (!email || !password) {
+        loginError.textContent = "Email/Password required";
+        return
+      }
         const formData = {
           email: email,
           password: password,
@@ -177,7 +181,7 @@
             loginError.textContent = data.error || "Login failed";
           }
         } catch (error) {
-          loginError.textContent = "Server error";
+          console.error(error) ;
         }
       });
     </script>

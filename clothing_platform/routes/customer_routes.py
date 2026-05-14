@@ -1,4 +1,4 @@
-from flask import Blueprint, g, jsonify, redirect, render_template, request
+from flask import Blueprint, flash, g, jsonify, redirect, render_template, request
 from middleware.auth_middleware import login_required, role_required
 from services.customer_service import (
     get_approved_products,
@@ -30,7 +30,7 @@ def add_product_to_cart():
     payload = request.get_json(silent=True) or {}
     body, status_code = add_to_cart(
         g.current_user.user_id, payload
-    )  # Payload: {"product_id": 1, "quantity": 2}
+    ) 
     return jsonify(body), status_code
 
 
@@ -45,7 +45,6 @@ def view_cart():
                 "cart-page.html", cart=cart_data, user=g.current_user
             )
         else:
-            # return render_template("cart-page.html", cart=None, user=g.current_user)
             return render_template("cart-page.html", cart=[], user=g.current_user)
     else:
         return render_template("error.html", message=body["message"])
@@ -55,9 +54,7 @@ def view_cart():
 @role_required("CUSTOMER")
 def update_cart_item(product_id):
     payload = request.get_json(silent=True) or {}
-    body, status_code = update_cart_quantity(
-        g.current_user.user_id, product_id, payload
-    )
+    body, status_code = update_cart_quantity( g.current_user.user_id, product_id, payload)
     return jsonify(body), status_code
 
 
@@ -98,7 +95,8 @@ def place_order():
     body, status_code = checkout(g.current_user.user_id, payload)
 
     if status_code == 201:  # Order created successfully
-        return redirect("/customer/orders")
+        flash("Order is placed successfully!", "success")
+        return jsonify({"message": "Order placed successfully"}), 201
     else:
         return render_template("error.html", message=body["message"])
 
@@ -113,6 +111,4 @@ def get_customer_orders():
         return render_template("order-page.html", orders=body.get("orders", []), user=g.current_user)
     else:
         return render_template("error.html", message=body["message"])
-
-
 

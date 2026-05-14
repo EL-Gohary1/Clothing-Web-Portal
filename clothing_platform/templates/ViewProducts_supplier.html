@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lila Cloth - Supplier Products</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -13,7 +15,7 @@
             <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo">
         </div>
         <div class="profile-section">
-            <div class="welcome-text">Welcome, <span class="supplier-name">{{ g.current_user.name if g.current_user else 'Supplier' }}</span></div>
+            <div class="welcome-text">Welcome, <span class="supplier-name">{{user.name}}</span></div>
             <a href="/auth/profile" class="profile-icon">Profile</a>
         </div>
     </nav>
@@ -33,9 +35,9 @@
     </div>
 
     <div class="sub-tabs">
-        <button class="sub-tab active" data-filter="all">All</button>
-        <button class="sub-tab" data-filter="APPROVED">Approved</button>
-        <button class="sub-tab" data-filter="PENDING">Pending</button>
+        <a href="/supplier-dhashboard/view-products" class="sub-tab" data-filter="all">All</a>
+        <a href="/supplier-dhashboard/view-products?status=APPROVED" class="sub-tab" data-filter="APPROVED">Approved</a>
+        <a href="/supplier-dhashboard/view-products?status=PENDING" class="sub-tab" data-filter="PENDING">Pending</a>
     </div>
 
     <div class="products-container" id="productsList"></div>
@@ -43,42 +45,29 @@
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
-        const API_BASE = "/supplier-dhashboard";
-        let products = [];
+        let products = {{ products | tojson }};
         let currentFilter = "all";
         let currentSearch = "";
 
-        async function fetchProducts() {
-            try {
-                let url = `${API_BASE}/products`;
-                const response = await fetch(url);
-                if (response.ok) {
-                    const data = await response.json();
-                    products = data.products || [];
-                    renderProducts();
-                }
-            } catch (error) { console.error("Error:", error); }
-        }
+        sessionStorage.setItem('lastPage', window.location.href);
 
         function renderProducts() {
             const container = document.getElementById('productsList');
             if (!container) return;
 
-            let filtered = products.filter(p =>
-                p.product_status !== 'REJECTED' &&
-                p.product_title.toLowerCase().includes(currentSearch.toLowerCase())
-            );
-
-            if (currentFilter !== "all") {
-                filtered = filtered.filter(p => p.product_status === currentFilter);
+            let filteredProducts = products;
+            if (currentSearch.trim() !== "") {
+                filteredProducts = products.filter(p =>
+                    p.product_title.toLowerCase().includes(currentSearch.toLowerCase())
+                );
             }
 
-            if (filtered.length === 0) {
+            if (filteredProducts.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding:50px; color:#888;">No products found.</div>`;
                 return;
             }
 
-            container.innerHTML = filtered.map(product => `
+            container.innerHTML = filteredProducts.map(product => `
                 <div class="product-item">
                     <div class="product-photo">
                         <img src="/static/images/${product.photo}" onerror="this.src='https://via.placeholder.com/150'">
@@ -102,14 +91,15 @@
         }
 
         async function deleteProduct(id) {
-            if(!confirm("Are you sure?")) return;
             try {
-                const response = await fetch(`${API_BASE}/products/${id}`, { method: "DELETE" });
+                const response = await fetch(`/supplier-dhashboard/products/${id}`, { method: "DELETE" });
                 if (response.ok) {
                     products = products.filter(p => p.product_id !== id);
                     renderProducts();
                 }
-            } catch (error) { console.error(error); }
+            } catch (error) { 
+                console.error(error); 
+            }
         }
 
         document.getElementById('searchBtn').onclick = () => {
@@ -118,15 +108,53 @@
         };
 
         document.querySelectorAll('.sub-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
+            tab.addEventListener('click', async function (event) {
+                event.preventDefault();
+
                 document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
-                currentFilter = this.getAttribute('data-filter');
-                renderProducts();
+
+                const newUrl = this.getAttribute('href');
+                window.history.pushState({ path: newUrl }, '', newUrl);
+
+                let filter = this.getAttribute('data-filter');
+
+                let apiUrl = '/supplier-dhashboard/products';
+                if (filter !== 'all') {
+                    apiUrl += `?status=${filter}`;
+                }
+
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+
+                    products = data.products || [];
+                    currentSearch = document.getElementById('searchInput').value;
+                    renderProducts();
+
+                } catch (error) {
+                    console.error("Error fetching products:", error);
+                }
             });
         });
 
-        fetchProducts();
+        window.addEventListener('popstate', function () {
+            window.location.reload();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentStatus = urlParams.get('status') || 'all';
+
+            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            const activeTab = document.querySelector(`.sub-tab[data-filter="${currentStatus}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        });
+
+        renderProducts();
     </script>
 </body>
+
 </html>

@@ -14,11 +14,8 @@
         </div>
         <div class="profile-section">
             <div class="welcome-text">
-                Welcome, <span class="admin-name">Admin's Name.</span>
+                Welcome, <span class="admin-name">{{user.name}}</span>
             </div>
-            <a href="/auth/profile">
-                <div class="profile-icon">Profile</div>
-            </a>
         </div>
     </nav>
 
@@ -67,6 +64,7 @@
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
+        sessionStorage.setItem('lastPage', window.location.href);
         const saveBtn = document.getElementById('saveBtn');
         async function saveProduct() {
             const name = document.getElementById('productName').value.trim();
@@ -82,7 +80,7 @@
                 description: desc,
                 unit_price: price,
                 photo: photo,
-                stock_quantity: stock,
+                stock_qty: stock,
                 supplier_id: supplierId,
                 product_status: "APPROVED"
             };    

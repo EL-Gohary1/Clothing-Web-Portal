@@ -1,50 +1,49 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Your Cart | Lila Cloth</title>
-  </head>
-  <body>
-    <!-- shared navbar -->
-    <iframe
-      src="{{ '/static/customer-nav-bar.html' if user else '/static/nav-bar.html' }}"
-      class="nav-frame"
-      scrolling="no"
-    ></iframe>
 
-    <main class="cart-container">
-      <h1>Shopping Cart</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <title>Your Cart | Lila Cloth</title>
+</head>
 
-      <div id="cart-items-wrapper"></div>
+<body>
+  
+  <iframe src="/customer-navbar" class="nav-frame" scrolling="no" frameborder="0"></iframe>
+  
+  <main class="cart-container">
+    <h1>Shopping Cart</h1>
 
-      <div class="cart-summary">
-        <div class="total-display">
-          Total: <span id="grand-total">0.00 EGP</span>
-        </div>
-        <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+    <div id="cart-items-wrapper"></div>
+
+    <div class="cart-summary">
+      <div class="total-display">
+        Total: <span id="grand-total">0.00 EGP</span>
       </div>
-    </main>
+      <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+    </div>
+  </main>
 
-    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+  <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
-    <script>
-      let cart = {{ cart | tojson }};
-      console.log("Cart Data:", cart);
-      function renderCartItems() {
-        const container = document.getElementById("cart-items-wrapper");
+  <script>
+    let cart = {{ cart | tojson }};
+    sessionStorage.setItem('lastPage', window.location.href);
 
-        if (!cart || !cart.items || cart.items.length === 0) {
-          container.innerHTML = "<p>Your cart is empty.</p>";
-          document.getElementById("grand-total").innerText = "0.00 EGP";
-          return;
-        }
+    function renderCartItems() {
+      const container = document.getElementById("cart-items-wrapper");
 
-        container.innerHTML = cart.items
-          .map(
-            (item) => `
-            <div class="cart-item" id="item-${item.product_id}">
+      if (!cart || !cart.items || cart.items.length === 0) {
+        container.innerHTML = "<p>Your cart is empty.</p>";
+        document.getElementsByClassName("checkout-btn")[0].disabled = true;
+        document.getElementsByClassName("checkout-btn")[0].style.cursor = "not-allowed";
+        document.getElementById("grand-total").innerText = "0.00 EGP";
+        return;
+      }
+
+      container.innerHTML = cart.items.map((item) => `
+              <div class="cart-item" id="item-${item.product_id}">
                 <div class="item-left">
                     <div class="photo-box">
                         <img src="/static/images/${item.product_photo}" alt="${item.product_title}" />
@@ -59,107 +58,101 @@
                 </div>
 
                 <div class="item-right">
-                    <div class="field item-name">
-                        ${item.product_title}
-                    </div>
-
-                    <div class="field price-box">
-                        Price: <span id="price-${item.product_id}">${item.unit_price.toFixed(2)}</span> EGP
-                    </div>
-
-                    <div class="field">
-                        Subtotal:
-                        <span class="item-subtotal" id="subtotal-${item.product_id}">
-                            ${(item.unit_price * item.quantity).toFixed(2)}
-                        </span> EGP
-                    </div>
-
-                    <div class="field item-desc">
-                        ${item.product_description || 'No description available.'}
-                    </div>
+                    <div class="field item-name">${item.product_title}</div>
+                    <div class="field price-box"> Price: <span id="price-${item.product_id}">${item.unit_price.toFixed(2)}</span> EGP </div>
+                    <div class="field"> Subtotal: <span class="item-subtotal" id="subtotal-${item.product_id}"> ${(item.unit_price * item.quantity).toFixed(2)} </span> EGP </div>
+                    <div class="field item-desc"> ${item.product_description || 'No description available.'} </div>
                 </div>
             </div>
           `
-          )
-          .join("");
+        )
+        .join("");
+
+      updateGrandTotal();
+    }
+
+    function updateGrandTotal() {
+      let total = 0;
+      document.querySelectorAll(".item-subtotal").forEach((el) => {
+        total += parseFloat(el.innerText);
+      });
+      document.getElementById("grand-total").innerText = total.toFixed(2) + " EGP" + " + (50 EGP Shipping)";
+    }
+
+    async function increaseQty(productId) {
+      const qtyEl = document.getElementById(`qty-${productId}`);
+      let newQty = parseInt(qtyEl.innerText) + 1;
+      await updateServerQty(productId, newQty);
+    }
+
+    async function decreaseQty(productId) {
+      const qtyEl = document.getElementById(`qty-${productId}`);
+      let newQty = parseInt(qtyEl.innerText) - 1;
+      if (newQty < 1) return;
+      await updateServerQty(productId, newQty);
+    }
+
+    async function updateServerQty(productId, newQty) {
+      try {
+        const res = await fetch(`/customer/cart/${productId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: newQty }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          console.error(data.message);
+          return;
+        }
+
+        // Update UI
+        document.getElementById(`qty-${productId}`).innerText = newQty;
+        const price = parseFloat(document.getElementById(`price-${productId}`).innerText);
+        document.getElementById(`subtotal-${productId}`).innerText = (price * newQty).toFixed(2);
+        updateGrandTotal();
+      } catch (err) {
+        console.error("Error updating quantity:", err);
+      }
+    }
+
+    async function removeItem(productId) {
+
+      try {
+        const res = await fetch(`/customer/cart/${productId}`, { method: "DELETE" });
+        const data = await res.json();
+
+        if (!res.ok) {
+          console.error(data.message);
+          return;
+        }
+
+        cart.items = cart.items.filter(item => item.product_id !== productId);
+
+        document.getElementById(`item-${productId}`).remove();
 
         updateGrandTotal();
-      }
 
-      function updateGrandTotal() {
-        let total = 0;
-        document.querySelectorAll(".item-subtotal").forEach((el) => {
-          total += parseFloat(el.innerText);
-        });
-        document.getElementById("grand-total").innerText = total.toFixed(2) + " EGP";
-      }
-
-      async function increaseQty(productId) {
-        const qtyEl = document.getElementById(`qty-${productId}`);
-        let newQty = parseInt(qtyEl.innerText) + 1;
-        await updateServerQty(productId, newQty);
-      }
-
-      async function decreaseQty(productId) {
-        const qtyEl = document.getElementById(`qty-${productId}`);
-        let newQty = parseInt(qtyEl.innerText) - 1;
-        if (newQty < 1) return;
-        await updateServerQty(productId, newQty);
-      }
-
-      async function updateServerQty(productId, newQty) {
-        try {
-          const res = await fetch(`/customer/cart/${productId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ quantity: newQty }),
-          });
-
-          const data = await res.json();
-          if (!res.ok) {
-            alert(data.message);
-            return;
-          }
-
-          // Update UI
-          document.getElementById(`qty-${productId}`).innerText = newQty;
-          const price = parseFloat(document.getElementById(`price-${productId}`).innerText);
-          document.getElementById(`subtotal-${productId}`).innerText = (price * newQty).toFixed(2);
-          updateGrandTotal();
-        } catch (err) {
-          console.error("Error updating quantity:", err);
+        if (document.querySelectorAll('.cart-item').length === 0) {
+          renderCartItems();
         }
+      } catch (err) {
+        console.error("Error removing item:", err);
       }
+    }
 
-      async function removeItem(productId) {
-        if (!confirm("Remove this item from your cart?")) return;
-
-        try {
-          const res = await fetch(`/customer/cart/${productId}`, { method: "DELETE" });
-          const data = await res.json();
-
-          if (!res.ok) {
-            alert(data.message);
-            return;
-          }
-
-          document.getElementById(`item-${productId}`).remove();
-          updateGrandTotal();
-
-          if (document.querySelectorAll('.cart-item').length === 0) {
-            renderCartItems();
-          }
-        } catch (err) {
-          console.error("Error removing item:", err);
-        }
+    function goToCheckout() {
+      if(!cart || !cart.items || cart.items.length === 0) {
+        document.getElementsByClassName("checkout-btn")[0].disabled = true;
+        document.getElementsByClassName("checkout-btn")[0].style.cursor = "not-allowed";
+        return;
       }
+      window.location.href = "/customer/checkout";
+    }
 
-      function goToCheckout() {
-        window.location.href = "/customer/checkout";
-      }
+    renderCartItems();
 
-      // Initialize
-      renderCartItems();
-    </script>
-  </body>
+</script>
+</body>
+
 </html>

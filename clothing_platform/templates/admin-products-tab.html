@@ -10,7 +10,7 @@
 
     <nav class="navbar">
         <div class="logo">
-            <img src="../static/images/Logo.png" alt="Lila Cloth Logo" onerror="this.src='https://via.placeholder.com/60?text=Logo'">
+            <img src="../static/images/Logo.png" alt="Lila Cloth Logo">
         </div>
         <div class="profile-section">
             <div class="welcome-text">
@@ -48,20 +48,16 @@
         <button class="sub-tab" data-filter="PENDING">Pending</button>
     </div>
 
+    <div id="noProductMessage">No products found!</div>
     <div class="products-container" id="productsList"></div>
-
     <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
 
     <script>
         let products = {{ products | tojson }};
         let currentFilter = "all";
         let currentSearch = "";
-
-        document.addEventListener("DOMContentLoaded", () => {
-            renderProducts();
-            setupTabs();
-        });
-
+        sessionStorage.setItem('lastPage', window.location.href);
+           
         function setupTabs() {
             const subTabs = document.querySelectorAll('.sub-tab');
             subTabs.forEach(tab => {
@@ -78,29 +74,41 @@
             const container = document.getElementById('productsList');
             if (!container) return;
 
-            let filtered = products.filter(p => p.product_status !== "REJECTED");
+            if (products.length === 0) {
+                document.getElementById("noProductMessage").style.display = "block";
+                return;
+            }
+
+            let filtered = products;
 
             if (currentFilter !== "all") {
                 filtered = filtered.filter(p => p.product_status === currentFilter);
             }
 
             if (currentSearch) {
-                filtered = filtered.filter(p =>
-                    p.product_title.toLowerCase().includes(currentSearch.toLowerCase())
-                );
+                filtered = filtered.filter(p => p.product_title.toLowerCase().includes(currentSearch.toLowerCase()));
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = "";
+                document.getElementById("noProductMessage").style.display = "block";
+                return;
+            } else {
+                document.getElementById("noProductMessage").style.display = "none";
             }
 
             container.innerHTML = filtered.map(product => `
                 <div class="product-item" data-id="${product.product_id}">
                     <div class="product-photo">
-                        <img src="/static/images/${product.photo}" alt="${product.product_title}" onerror="this.src='https://via.placeholder.com/180'">
+                        <img src="/static/images/${product.photo}" alt="${product.product_title}">
                     </div>
                     <div class="product-info">
                         <div class="product-title">${product.product_title}</div>
                         <div class="product-details">
                             <strong>Description:</strong> ${product.description}<br>
                             <strong>Price:</strong> ${product.unit_price} EGP<br>
-                            <strong>Stock:</strong> ${product.stock_qty}
+                            <strong>Stock:</strong> ${product.stock_qty}<br>
+                            <strong>Supplier Email:</strong> ${product.supplier_email}
                         </div>
                     </div>
                     <div class="product-right">
@@ -110,7 +118,7 @@
                         <div class="action-buttons">
                             ${product.product_status === 'PENDING' ? `
                                 <button class="approve-btn" onclick="approveProduct(${product.product_id})">Approve</button>
-                                <button class="reject-btn" onclick="rejectProduct(${product.product_id})">Reject</button>
+                                <button class="reject-btn" onclick="deleteProduct(${product.product_id})">Reject</button>
                             ` : ''}
                             <button class="delete-icon" onclick="deleteProduct(${product.product_id})">🗑️</button>
                         </div>
@@ -125,16 +133,6 @@
                 if (response.ok) {
                     const product = products.find(p => p.product_id === id);
                     if (product) product.product_status = "APPROVED";
-                    renderProducts();
-                }
-            } catch (error) { console.error(error); }
-        }
-
-        async function rejectProduct(id) {
-            try {
-                const response = await fetch(`/admin-dashboard/products/${id}/reject`, { method: "PATCH" });
-                if (response.ok) {
-                    products = products.filter(p => p.product_id !== id);
                     renderProducts();
                 }
             } catch (error) { console.error(error); }
@@ -161,6 +159,9 @@
 
         searchBtn.addEventListener('click', performSearch);
         searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+        renderProducts();
+        setupTabs();
+
     </script>
 </body>
 </html>

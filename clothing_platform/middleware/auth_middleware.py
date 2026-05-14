@@ -10,12 +10,14 @@ def login_required(view_function):
     def wrapper(*args, **kwargs):
         user_id = session.get('user_id')
         if user_id is None:
-            return jsonify({'error': 'authentication required'}), 401
+            return {'error': 'Please login to add items to cart'}, 401
+        
+
 
         user = User.query.get(user_id)
         if user is None:
             session.clear()
-            return jsonify({'error': 'session is invalid, please login again'}), 401
+            return {'error': 'session is invalid, please login again'}, 401
 
         g.current_user = user
         return view_function(*args, **kwargs)

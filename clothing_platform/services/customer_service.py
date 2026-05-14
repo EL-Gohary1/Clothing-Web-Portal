@@ -28,7 +28,6 @@ def add_to_cart(customer_id, payload):
         if not product_id or quantity <= 0: #backend validation
             return {
                 "message": "Invalid product_id or quantity",
-                "error": "product_id and quantity (positive) are required",
             }, 400
 
         #backend Validation
@@ -40,7 +39,6 @@ def add_to_cart(customer_id, payload):
         if not product:
             return {
                 "message": "Product not found or not approved",
-                "error": f"Product {product_id} is not available",
             }, 404
 
         # Check stock
@@ -56,7 +54,7 @@ def add_to_cart(customer_id, payload):
         if not cart:
             cart = Cart(customer_id=customer_id)
             db.session.add(cart)
-            db.session.flush()  # Get cart_id without committing
+            db.session.flush()
 
         # Check if product already in cart
         cart_product = CartProduct.query.filter_by(
@@ -69,7 +67,6 @@ def add_to_cart(customer_id, payload):
             if product.stock_qty < new_quantity:
                 return {
                     "message": "Insufficient stock",
-                    "error": f"Only {product.stock_qty} items available",
                 }, 400
             cart_product.quantity = new_quantity
         else:
@@ -100,9 +97,31 @@ def get_customer_cart(customer_id):
         if not cart:
             return {"message": "Cart is empty", "cart": None}, 200
 
+        cart_products = CartProduct.query.filter_by(cart_id=cart.cart_id).all()
+        is_updated = False
+
+        for item in cart_products:
+            product = Product.query.get(item.product_id)
+            
+            if product:
+                if item.quantity > product.stock_qty:
+                    item.quantity = product.stock_qty
+                    is_updated = True
+                    if item.quantity == 0:
+                        db.session.delete(item)
+                
+                if product.product_status != ProductStatus.APPROVED:
+                    db.session.delete(item)
+                    is_updated = True
+
+        if is_updated:
+            db.session.commit()
+            db.session.refresh(cart) 
+
         return {"message": "Cart retrieved successfully", "cart": cart.to_dict()}, 200
 
     except Exception as exc:
+        db.session.rollback()
         return {"message": "Error retrieving cart", "error": str(exc)}, 500
 
 
@@ -224,7 +243,6 @@ def checkout(customer_id, payload):
                 db.session.rollback()
                 return {
                     "message": f"Insufficient stock for {product.product_title}",
-                    "error": f"Only {product.stock_qty} available, {item.quantity} requested",
                 }, 400
 
             subtotal = product.unit_price * item.quantity
@@ -238,6 +256,7 @@ def checkout(customer_id, payload):
                     "subtotal": subtotal,
                 }
             )
+        total_price += 50
 
         # Create order
         order = Order(
@@ -281,7 +300,7 @@ def checkout(customer_id, payload):
         db.session.commit()
 
         return {
-            "message": "Order placed successfully",
+            "message": "Order is placed successfully",
             "order_id": order.order_id,
             "customer_id": customer_id,
             "delivery_address": order.delivery_address,
