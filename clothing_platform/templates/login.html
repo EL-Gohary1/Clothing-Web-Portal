@@ -144,10 +144,22 @@
         const email = emailInput.value.trim().toLowerCase();
         const password = passwordInput.value.trim();
 
-        if (!email || !password) {
-        loginError.textContent = "Email/Password required";
-        return
-      }
+        
+        if (!email && !password) {
+          loginError.textContent = "Email/Password required";
+          return
+        }
+        else {
+            if (!email) {
+            loginError.textContent = "Email is required";
+            return
+          }
+          if (!password) {
+            loginError.textContent = "Password is required";
+            return
+          }
+        }
+
         const formData = {
           email: email,
           password: password,
