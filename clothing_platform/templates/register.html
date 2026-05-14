@@ -286,7 +286,8 @@
         if (response.ok) {
             window.location.href = "/auth/login";
         } else {
-          alert(data.error);
+          setError(emailInput, "emailError", "Email already exists");
+          console.error(data.error);
         }
       } catch (error) {
         console.error("Error during registration:", error);
