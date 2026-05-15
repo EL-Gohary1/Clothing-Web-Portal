@@ -3,7 +3,28 @@ from models.product_model import Product, ProductStatus
 from models.cart_model import Cart, CartProduct
 from models.order_model import Order, OrderProduct
 from models.user_model import User
+from extensions import mail 
+from flask_mail import Message
 
+def send_order_email(customer_email, order_id, total_price, receiver_name):
+    try:
+        msg = Message(
+            subject=f"Order Confirmed! - Lila Cloth #{order_id}",
+            sender="noreply@lilacloth.com",
+            recipients=[customer_email]
+        )
+        msg.body = f"""
+        Hello {receiver_name},
+        
+        Your order #{order_id} has been placed successfully!
+        Total Price: {total_price} EGP (including shipping).
+        
+        Thank you for choosing Lila Cloth.
+        """
+        mail.send(msg)
+        print(f"Email sent successfully to {customer_email}")
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
 
 def get_approved_products():
     try:
@@ -300,7 +321,12 @@ def checkout(customer_id, payload):
         CartProduct.query.filter_by(cart_id=cart.cart_id).delete()
 
         db.session.commit()
-
+        send_order_email(
+            customer_email=payload.get("email"),
+            order_id=order.order_id,
+            total_price=order.total_price,
+            receiver_name=order.receiver_name
+        )
         return {
             "message": "Order is placed successfully",
             "order_id": order.order_id,

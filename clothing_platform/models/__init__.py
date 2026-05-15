@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from extensions import db
 
-db = SQLAlchemy()
 
 # Import models so SQLAlchemy can discover them.
 from .user_model import User, UserRole

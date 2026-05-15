@@ -10,9 +10,9 @@ from routes.customer_routes import customer_bp
 from routes.admin_routes import admin_bp
 from routes.supplier_routes import supplier_bp
 from services.customer_service import get_approved_products
+from extensions import mail, db, migrate
+from flask import Flask
 
-
-migrate = Migrate()
 
 
 def create_app(config_name=None):
@@ -20,6 +20,14 @@ def create_app(config_name=None):
 
     app = Flask(__name__)
     app.config.from_object(config.get(config_name, config['default']))
+
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = 'mahmoudelgohary133@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'ituoaubvckyamsmh'
+    
+    mail.init_app(app)
 
     db.init_app(app)
     migrate.init_app(app, db)
