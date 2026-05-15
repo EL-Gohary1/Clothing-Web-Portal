@@ -96,9 +96,10 @@ def get_orders_with_own_products(supplier_id):
     result = []
     for order in orders:
         own_items = [
-            op for op in order.order_products
+            op for op in order.items
             if op.product_id in supplier_product_ids
         ]
+        
         result.append({
             'order_id': order.order_id,
             'creation_date': order.creation_date.isoformat(),
@@ -108,7 +109,8 @@ def get_orders_with_own_products(supplier_id):
             'my_items': [
                 {
                     'product_id': item.product_id,
-                    'product_title': item.product.product_title,
+                    # التعديل 2: استخدمنا الحقل المؤرشف product_title_at_purchase
+                    'product_title': item.product_title_at_purchase if item.product_title_at_purchase else "Deleted Product",
                     'quantity': item.quantity,
                     'unit_price': item.unit_price,
                     'subtotal': item.subtotal,

@@ -98,7 +98,7 @@ def place_order():
         flash("Order is placed successfully!", "success")
         return jsonify({"message": "Order placed successfully"}), 201
     else:
-        return render_template("error.html", message=body["message"])
+        return jsonify({"status": "error", "message": body.get("message"), "details": body.get("error")}), status_code
 
 
 @customer_bp.get("/orders")

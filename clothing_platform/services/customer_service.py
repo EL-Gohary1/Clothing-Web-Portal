@@ -251,6 +251,7 @@ def checkout(customer_id, payload):
             order_details.append(
                 {
                     "product_id": product.product_id,
+                    "product_title": product.product_title,
                     "quantity": item.quantity,
                     "unit_price": product.unit_price,
                     "subtotal": subtotal,
@@ -285,6 +286,7 @@ def checkout(customer_id, payload):
                 quantity=item.quantity,
                 unit_price=product.unit_price,
                 subtotal=round(product.unit_price * item.quantity, 2),
+                product_title_at_purchase=product.product_title,
                 supplier_email_at_purchase=product.supplier.email,
                 customer_email=payload.get("email"),
             )

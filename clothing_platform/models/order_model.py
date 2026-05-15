@@ -5,26 +5,27 @@ class Order(db.Model):
     __tablename__ = 'order'
 
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
     delivery_city = db.Column(db.String(100))
     delivery_address = db.Column(db.String(255))
     receiver_name = db.Column(db.String(100))
     receiver_phone = db.Column(db.String(50))
     total_price = db.Column(db.Float, nullable=False)
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    items = db.relationship('OrderProduct', backref='associated_order', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return f'<Order {self.order_id} - ${self.total_price}>'
+        return f'<Order {self.order_id} - {self.total_price}>'
 
     def get_items(self):
         return OrderProduct.query.filter_by(order_id=self.order_id).all()
 
     def to_dict(self):
         items = self.get_items()
-
-        supplier_emails = list(
-            set([item.supplier_email_at_purchase for item in items if item.supplier_email_at_purchase]))
-
+        
+        supplier_emails = list(set([item.supplier_email_at_purchase for item in items if item.supplier_email_at_purchase]))
+        
         return {
             'order_id': self.order_id,
             'customer_id': self.customer_id,
@@ -38,7 +39,7 @@ class Order(db.Model):
             'creation_date': self.creation_date.isoformat(),
             'items': [{
                 'product_id': item.product_id,
-                'product_title': item.product.product_title,
+                'product_title': item.product_title_at_purchase if item.product_title_at_purchase else "Deleted Product",
                 'quantity': item.quantity,
                 'unit_price': item.unit_price,
                 'subtotal': item.subtotal,
@@ -46,19 +47,18 @@ class Order(db.Model):
             } for item in items]
         }
 
-
 class OrderProduct(db.Model):
     __tablename__ = 'order_product'
-
-    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'), primary_key=True)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), primary_key=True)
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id', ondelete='SET NULL'), nullable=True)
     quantity = db.Column(db.Integer, nullable=False)
     unit_price = db.Column(db.Float, nullable=False)
     subtotal = db.Column(db.Float, nullable=False)
+    product_title_at_purchase = db.Column(db.String(200))
     supplier_email_at_purchase = db.Column(db.String(120))
     customer_email = db.Column(db.String(120))
 
-    order = db.relationship('Order', backref='order_products')
-    product = db.relationship('Product', backref=db.backref('order_products', cascade='all, delete-orphan'))
     def __repr__(self):
-        return f'<OrderProduct order={self.order_id} product={self.product_id}>'
+        return f'<OrderProduct {self.id} order={self.order_id} product={self.product_id}>'
