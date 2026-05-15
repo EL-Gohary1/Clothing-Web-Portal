@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>My Orders | Lila Cloth</title>
+  </head>
+  <body>
+    <!-- shared navbar -->
+    <iframe src="/customer-navbar" class="nav-frame" scrolling="no" frameborder="0"></iframe>
+
+    <main class="main-content">
+      <div class="orders-card">
+        <h2>Your Previous Orders</h2>
+        {% if orders and orders|length > 0 %}
+          {% for order in orders %}
+            <a href="#" class="order-row">
+              <div class="order-info">
+                ID: {{ order.order_id }}
+                <span>|</span>
+                Price: {{ "%.2f"|format(order.total_price or 0) }}
+                <span>|</span>
+                Date: {{ (order.creation_date or "")[:10] }}
+              </div>
+            </a>
+          {% endfor %}
+        {% else %}
+          <div class="order-info">No orders yet.</div>
+        {% endif %}
+      </div>
+    </main>
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+      // Store the last visited page in sessionStorage
+      sessionStorage.setItem('lastPage', window.location.href);
+    </script>
+    
+  </body>
+</html>

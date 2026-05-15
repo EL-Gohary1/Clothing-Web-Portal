@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+      body {
+        background: transparent;
+        overflow: hidden;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: var(--nav-height);
+        padding: 0 5%;
+        background-color: white;
+        border-bottom: 3px solid;
+        border-image: linear-gradient(
+            to right,
+            var(--primary-pink),
+            var(--primary-purple),
+            var(--primary-blue)
+          )
+          1;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      .logo img {
+        height: 60px;
+        display: block;
+        width: auto;
+      }
+      .nav-links {
+        display: flex;
+        gap: 20px;
+        list-style: none;
+        align-items: center;
+      }
+      .nav-links a {
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1.1rem;
+        transition: 0.3s;
+        text-transform: capitalize;
+        padding: 8px 20px;
+        border-radius: 25px;
+      }
+
+      /* Buttons styling */
+      .home-btn {
+        color: var(--primary-pink);
+        border: 1.5px solid var(--primary-pink);
+      }
+      .home-btn:hover {
+        background-color: var(--primary-pink);
+        color: white;
+      }
+
+      .cart-btn {
+        color: var(--primary-pink);
+        border: 1.5px solid var(--primary-pink);
+      }
+      .cart-btn:hover {
+        background-color: var(--primary-pink);
+        color: white;
+      }
+
+      .orders-btn {
+        color: var(--primary-pink);
+        border: 1.5px solid var(--primary-pink);
+      }
+      .orders-btn:hover {
+        background-color: var(--primary-pink);
+        color: white;
+      }
+
+      @media (max-width: 600px) {
+        .navbar {
+          padding: 0 15px;
+        }
+        .logo img {
+          height: 45px;
+        }
+        .nav-links a {
+          font-size: 0.85rem;
+          padding: 6px 15px;
+        }
+      }
+
+      .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .profile-icon {
+        background: linear-gradient(
+          135deg,
+          var(--primary-pink),
+          var(--primary-purple)
+        );
+        border: none;
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: white;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          opacity 0.2s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .profile-icon:hover {
+        transform: scale(1.02);
+        opacity: 0.9;
+      }
+      .name {
+        color: var(--primary-purple);
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="images/Logo.png" alt="Lila Cloth Logo" />
+      </div>
+      <ul class="nav-links" style="align: center">
+        <li>
+          <a href="/customer" target="_parent" class="home-btn">home</a>
+        </li>
+        <li>
+          <a href="/customer/cart" target="_parent" class="cart-btn">cart</a>
+        </li>
+        <li>
+          <a href="/customer/orders" target="_parent" class="orders-btn"
+            >orders</a
+          >
+        </li>
+      </ul>
+
+      <div class="profile-section">
+        <a href="/auth/profile" target="_parent">
+          <div class="profile-icon">Profile</div>
+        </a>
+      </div>
+    </nav>
+  </body>
+</html>

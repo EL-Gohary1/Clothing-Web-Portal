@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lila Cloth - View Suppliers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="../static/images/Logo.png" alt="Lila Cloth Logo" onerror="this.src='https://via.placeholder.com/60?text=Logo'">
+        </div>
+        <div class="profile-section">
+            <div class="welcome-text">
+                Welcome, <span class="admin-name">{{user.name}}</span>
+            </div>
+            <a href="/auth/profile">
+                <div class="profile-icon">Profile</div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="actions-bar">
+        <div class="dropdown">
+            <button class="dropbtn">Actions</button>
+            <div class="dropdown-content">
+                <a href="/admin-dashboard/add-user">Add user</a>
+                <a href="/admin-dashboard/add-product">Add product</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <a href="/admin-dashboard/customers" class="tab">Customers</a>
+        <a href="/admin-dashboard/suppliers" class="tab active">Suppliers</a>
+        <a href="/admin-dashboard/products" class="tab">Products</a>
+        <a href="/admin-dashboard/orders" class="tab">Orders</a>
+    </div>
+
+    <div class="suppliers-container" id="suppliersList"></div>
+
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+        let suppliers = {{ suppliers | tojson }};
+        sessionStorage.setItem('lastPage', window.location.href);
+    
+        function renderSuppliers() {
+            const container = document.getElementById('suppliersList');
+            if (!container) return;
+
+            if (suppliers.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:12px;">No suppliers found.</div>`;
+                return;
+            }
+
+            container.innerHTML = suppliers.map(supplier => `
+                <div class="supplier-item" data-id="${supplier.user_id}">
+                    <div class="supplier-info">
+                        <div class="supplier-title">${supplier.name}</div>
+                        <div class="supplier-details">${supplier.email}</div>
+                    </div>
+                    <button class="delete-icon" onclick="deleteSupplier(${supplier.user_id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteSupplier(id) {
+            try {
+                const response = await fetch(`/admin-dashboard/users/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert(err.message || "Failed to delete supplier");
+                    return;
+                }
+
+                suppliers = suppliers.filter(s => s.user_id !== id);
+
+                renderSuppliers();
+
+            } catch (error) {
+                console.error(error);
+                alert("Server error while deleting supplier");
+            }
+        }
+
+        renderSuppliers();
+    </script>
+</body>
+</html>

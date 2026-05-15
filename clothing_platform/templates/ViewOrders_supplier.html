@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lila Cloth - Supplier Orders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo">
+        </div>
+        <div class="profile-section">
+            <div class="welcome-text">Welcome, <span class="supplier-name">{{user.name}}</span></div>
+            <a href="/auth/profile" class="profile-icon">Profile</a>
+        </div>
+    </nav>
+
+    <div class="actions-bar">
+        <a href="/supplier-dhashboard/add-product" class="add-product-btn">+ Add Product</a>
+    </div>
+
+    <div class="tabs">
+        <a href="/supplier-dhashboard/view-products" class="tab">Products</a>
+        <a href="/supplier-dhashboard/view-orders" class="tab active">Orders</a>
+    </div>
+
+    <div class="orders-container" id="ordersList">
+        </div>
+
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+
+        sessionStorage.setItem('lastPage', window.location.href);
+        // Retrieve orders data passed from Flask
+        let orders = {{ orders | tojson }};
+
+        function renderOrders(orders) {
+            const container = document.getElementById('ordersList');
+            if (!container) return;
+
+            if (orders.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-id">Order #${order.order_id}</span>
+                            <div class="order-date">${new Date(order.creation_date).toLocaleString()}</div>
+                        </div>
+                        <div style="text-align: right">
+                            <span style="font-size: 0.8rem; color: #888;">Your Earnings</span>
+                            <div style="color: #27ae60; font-weight: bold; font-size: 1.2rem;">
+                                ${order.my_items_total} <span class="currency">EGP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="customer-info">
+                        <strong>Receiver Name:</strong> ${order.receiver_name}<br>
+                        <strong>Phone:</strong> ${order.receiver_phone}<br>
+                        <strong>City:</strong> ${order.delivery_city}
+                    </div>
+
+                    <div class="items-list">
+                        <div style="font-size: 0.75rem; font-weight: bold; color: #aaa; margin-bottom: 10px; text-transform: uppercase;">Your Products</div>
+                        ${order.my_items.map(item => `
+                            <div class="item-row">
+                                <span>${item.product_title} <span style="color:#888;">x${item.quantity}</span></span>
+                                <span>${item.subtotal} <span class="currency">EGP</span></span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderOrders(orders);
+
+    </script>
+</body>
+</html>

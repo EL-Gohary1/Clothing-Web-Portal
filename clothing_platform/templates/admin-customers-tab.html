@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lila Cloth - View Customers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="../static/images/Logo.png" alt="Lila Cloth Logo" onerror="this.src='https://via.placeholder.com/60?text=Logo'">
+        </div>
+        <div class="profile-section">
+            <div class="welcome-text">
+                Welcome, <span class="admin-name">{{user.name}}</span>
+            </div>
+            <a href="/auth/profile">
+                <div class="profile-icon">Profile</div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="actions-bar">
+        <div class="dropdown">
+            <button class="dropbtn">Actions</button>
+            <div class="dropdown-content">
+                 <a href="/admin-dashboard/add-user">Add user</a>
+                <a href="/admin-dashboard/add-product">Add product</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <a href="/admin-dashboard/customers" class="tab active">Customers</a>
+        <a href="/admin-dashboard/suppliers" class="tab">Suppliers</a>
+        <a href="/admin-dashboard/products" class="tab">Products</a>
+        <a href="/admin-dashboard/orders" class="tab">Orders</a>
+    </div>
+
+    <div class="customers-container" id="customersList"></div>
+
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+        customers = {{ customers | tojson }};
+        sessionStorage.setItem('lastPage', window.location.href);
+
+        function renderCustomers() {
+            const container = document.getElementById('customersList');
+            if (!container) return;
+
+            if (customers.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:12px;">No customers found.</div>`;
+                return;
+            }
+
+            container.innerHTML = customers.map(customer => `
+                <div class="customer-item" data-id="${customer.user_id}">
+                    <div class="customer-info">
+                        <div class="customer-title">${customer.name}</div>
+                        <div class="customer-details">${customer.email}</div>
+                    </div>
+                    <button class="delete-icon" onclick="deleteCustomer(${customer.user_id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteCustomer(id) {
+            try {
+                const response = await fetch(`/admin-dashboard/users/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    console.error(err);
+                    return;
+                }
+
+                customers = customers.filter(c => c.user_id !== id);
+
+                renderCustomers();
+
+            } catch (error) {
+                console.error(error);
+                console.error("Server error while deleting customer");
+            }
+        }
+
+        renderCustomers();
+    </script>
+</body>
+</html>

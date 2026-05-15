@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lila Cloth - Supplier Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo">
+        </div>
+        <div class="profile-section">
+            <div class="welcome-text">Welcome, <span class="supplier-name">{{user.name}}</span></div>
+            <a href="/auth/profile" class="profile-icon">Profile</a>
+        </div>
+    </nav>
+
+    <div class="actions-bar">
+        <div></div>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search your products...">
+            <button class="search-btn" id="searchBtn">Search</button>
+        </div>
+        <a href="/supplier-dhashboard/add-product" class="add-product-btn">+ Add Product</a>
+    </div>
+
+    <div class="tabs">
+        <a href="/supplier-dhashboard/view-products" class="tab active">Products</a>
+        <a href="/supplier-dhashboard/view-orders" class="tab">Orders</a>
+    </div>
+
+    <div class="sub-tabs">
+        <a href="/supplier-dhashboard/view-products" class="sub-tab" data-filter="all">All</a>
+        <a href="/supplier-dhashboard/view-products?status=APPROVED" class="sub-tab" data-filter="APPROVED">Approved</a>
+        <a href="/supplier-dhashboard/view-products?status=PENDING" class="sub-tab" data-filter="PENDING">Pending</a>
+    </div>
+
+    <div class="products-container" id="productsList"></div>
+
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+        let products = {{ products | tojson }};
+        let currentFilter = "all";
+        let currentSearch = "";
+
+        sessionStorage.setItem('lastPage', window.location.href);
+
+        function renderProducts() {
+            const container = document.getElementById('productsList');
+            if (!container) return;
+
+            let filteredProducts = products;
+            if (currentSearch.trim() !== "") {
+                filteredProducts = products.filter(p =>
+                    p.product_title.toLowerCase().trim() === currentSearch.toLowerCase().trim()
+                );
+            }
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:50px; color:#888;">No products found.</div>`;
+                return;
+            }
+
+            container.innerHTML = filteredProducts.map(product => `
+                <div class="product-item">
+                    <div class="product-photo">
+                        <img src="/static/images/${product.photo}" onerror="this.src='https://via.placeholder.com/150'">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">${product.product_title}</div>
+                        <div class="product-details">
+                            <strong>Description:</strong> ${product.description || 'No description available.'}<br>
+                            <strong>Price:</strong> ${product.unit_price} EGP<br>
+                            <strong>Stock:</strong> ${product.stock_qty} units
+                        </div>
+                    </div>
+                    <div class="product-right">
+                        <span class="status-badge ${product.product_status === 'APPROVED' ? 'status-approved' : 'status-pending'}">
+                            ${product.product_status}
+                        </span>
+                        <button class="delete-icon" onclick="deleteProduct(${product.product_id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteProduct(id) {
+            try {
+                const response = await fetch(`/supplier-dhashboard/products/${id}`, { method: "DELETE" });
+                if (response.ok) {
+                    products = products.filter(p => p.product_id !== id);
+                    renderProducts();
+                }
+            } catch (error) { 
+                console.error(error); 
+            }
+        }
+
+        document.getElementById('searchBtn').onclick = () => {
+            currentSearch = document.getElementById('searchInput').value;
+            renderProducts();
+        };
+
+        document.querySelectorAll('.sub-tab').forEach(tab => {
+            tab.addEventListener('click', async function (event) {
+                event.preventDefault();
+
+                document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                const newUrl = this.getAttribute('href');
+                window.history.pushState({ path: newUrl }, '', newUrl);
+
+                let filter = this.getAttribute('data-filter');
+
+                let apiUrl = '/supplier-dhashboard/products';
+                if (filter !== 'all') {
+                    apiUrl += `?status=${filter}`;
+                }
+
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+
+                    products = data.products || [];
+                    currentSearch = document.getElementById('searchInput').value;
+                    renderProducts();
+
+                } catch (error) {
+                    console.error("Error fetching products:", error);
+                }
+            });
+        });
+
+        window.addEventListener('popstate', function () {
+            window.location.reload();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentStatus = urlParams.get('status') || 'all';
+
+            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            const activeTab = document.querySelector(`.sub-tab[data-filter="${currentStatus}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        });
+
+        renderProducts();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lila Cloth - Add Product</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Lila Cloth Logo">
+        </div>
+        <div class="profile-section">
+            <div class="welcome-text">Welcome, <span class="supplier-name">{{ g.current_user.name if g.current_user else 'Supplier' }}</span></div>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-title">Add New Product</div>
+
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" id="productName" placeholder="e.g. Modern Cotton Shirt">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="productDesc" placeholder="Describe the material, fit, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Unit Price (EGP)</label>
+                <input type="number" id="productPrice" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+                <label>Photo URL / Filename</label>
+                <input type="text" id="productPhoto" placeholder="image_name.jpg">
+            </div>
+
+            <div class="form-group">
+                <label>Stock Quantity</label>
+                <input type="number" id="productStock" placeholder="Amount available">
+            </div>
+
+            <div class="form-actions">
+                <a class="btn-back" onclick="goBack()">Cancel</a>
+                <button class="btn-save" id="saveBtn" onclick="saveProduct()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+    <script>
+        sessionStorage.setItem('lastPage', window.location.href);
+        async function saveProduct() {
+            const saveBtn = document.getElementById('saveBtn');
+            const data = {
+                product_title: document.getElementById('productName').value.trim(),
+                description: document.getElementById('productDesc').value.trim(),
+                unit_price: document.getElementById('productPrice').value,
+                photo: document.getElementById('productPhoto').value.trim(),
+                stock_qty: document.getElementById('productStock').value
+            };
+
+            if (!data.product_title || !data.unit_price || !data.stock_qty || !(data.unit_price > 0) || !(data.stock_qty > 0) || !data.photo) {
+                alert('Enter Valid Data');
+                return;
+            }
+
+            try {
+                saveBtn.disabled = true;
+                saveBtn.innerText = 'Saving...';
+
+                const response = await fetch('/supplier-dhashboard/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+
+                if (response.ok) {
+                    window.location.href = '/supplier-dhashboard/view-products';
+                } else {
+                    saveBtn.disabled = false;
+                    saveBtn.innerText = 'Submit';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                saveBtn.disabled = false;
+                saveBtn.innerText = 'Submit';
+            }
+        }
+        function goBack() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = "/supplier-dhashboard/view-products";
+            }
+        }
+    </script>
+</body>
+</html>

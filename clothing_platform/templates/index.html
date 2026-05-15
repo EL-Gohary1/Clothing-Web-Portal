@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <title>Lila Cloth</title>
+</head>
+
+<body>
+  
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000;">
+    {% for category, message in messages %}
+    <div class="toast-message {{ category }}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- shared navbar -->
+  {% if user %}
+    <iframe src="/customer-navbar" class="nav-frame" scrolling="no" frameborder="0"></iframe>
+  {% else %}
+    <iframe src="/static/landing-navbar.html" class="nav-frame" scrolling="no" frameborder="0"></iframe>
+  {% endif %}
+  
+  <main>
+    <div class="search-container">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search for names..." />
+      <button class="search-btn" id="searchBtn">Search</button>
+    </div>
+
+    <section class="product-grid" id="productGrid">
+    </section>
+    <div id="noProductMessage">No products found!</div>
+
+  </main>
+
+  <!-- shared footer -->
+  <iframe src="/static/footer.html" class="footer-frame" scrolling="no"></iframe>
+
+  <script>
+    products = {{ products | tojson }};
+
+    sessionStorage.setItem('lastPage', window.location.href);
+    
+    function renderProducts() {
+      const container = document.getElementById("productGrid");
+      if (!container) return;
+
+      if (typeof products === 'undefined' || !products || products.length === 0) {
+        container.innerHTML = "<p style='text-align:center; width:100%;'>No products available</p>";
+        return;
+      }
+
+      container.innerHTML = products.map(product => {
+        const statusStr = product.stock_status ? String(product.stock_status).toUpperCase() : "";
+
+        const isOutOfStock = statusStr.includes("OUT_OF_STOCK") || product.stock_qty <= 0;
+
+        const statusText = isOutOfStock ? "Out of Stock" : "In Stock";
+        const statusColor = isOutOfStock ? "#dc3545" : "#28a745";
+
+        return `
+            <div class="card">
+                <div class="photo-area">
+                    <img src="/static/images/${product.photo}" alt="${product.product_title}"/>
+                </div>
+
+                <div class="card-details">
+                    <div class="name">${product.product_title}</div>
+                    <div class="desc">${product.description}</div>
+                    <div class="price">${product.unit_price} EGP</div>
+
+                    <div class="info-row">
+                      <span>Stock: ${product.stock_qty} items</span>
+                      <span class="stock-status-text ${statusText === 'In Stock' ? 'text-success' : 'text-error'}">
+                          (${statusText})
+                      </span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="supplier-label">Supplier: ${product.supplier_email}</span>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <button class="qty-btn" onclick="decreaseQty(${product.product_id})" ${isOutOfStock ? 'disabled' : ''}>-</button>
+                        <span class="qty-val" id="qty-${product.product_id}">${isOutOfStock ? '0' : '1'}</span>
+                        <button class="qty-btn" onclick="increaseQty(${product.product_id}, ${product.stock_qty})" ${isOutOfStock ? 'disabled' : ''}>+</button>
+                    </div>
+
+                    <button class="add-to-cart"
+                            onclick="addToCart(${product.product_id})"
+                            ${isOutOfStock ? 'style="display: none;" disabled' : ''}>
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        `;
+      }).join('');
+    }
+
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+
+    function performSearch() {
+      const query = searchInput.value.toLowerCase().trim();
+      const cards = document.querySelectorAll(".card");
+      const noProductMessage = document.getElementById("noProductMessage");
+      let foundCount = 0;
+
+      cards.forEach((card) => {
+        const productName = card.querySelector(".name").innerText.toLowerCase();
+
+        if (productName === query) { 
+            card.style.display = "flex";
+            foundCount++;
+        } else {
+            card.style.display = "none";
+        }
+      });
+
+      if (foundCount === 0) {
+        noProductMessage.style.display = "block";
+      } else {
+        noProductMessage.style.display = "none";
+      }
+    }
+
+    searchBtn.addEventListener("click", performSearch);
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") performSearch();
+    });
+
+
+    async function addToCart(productId) {
+      const qtyEl = document.getElementById(`qty-${productId}`);
+      const quantity = parseInt(qtyEl.innerText);
+
+      try {
+        const response = await fetch("/customer/cart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: quantity
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (data.error) {
+            alert(data.error);
+          } else {
+          }
+          return;
+        }
+
+        alert("Added to cart");
+
+      } catch (error) {
+        console.error(error);
+        alert("Server error");
+      }
+    }
+    function increaseQty(id, max) {
+      const el = document.getElementById(`qty-${id}`);
+      let value = parseInt(el.innerText);
+
+      if (value < max) {
+        el.innerText = value + 1;
+      }
+    }
+
+    function decreaseQty(id) {
+      const el = document.getElementById(`qty-${id}`);
+      let value = parseInt(el.innerText);
+
+      if (value > 1) {
+        el.innerText = value - 1;
+      }
+    }
+
+
+
+    renderProducts();
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const toastContainer = document.getElementById('toast-container');
+      if (toastContainer) {
+        setTimeout(() => {
+          toastContainer.style.transition = "opacity 1s ease, transform 1s ease";
+          toastContainer.style.opacity = "0";
+          toastContainer.style.transform = "translate(-50%, -20px)";
+          setTimeout(() => { toastContainer.remove(); }, 1000);
+        }, 4000);
+      }
+    });
+
+  </script>
+</body>
+
+</html>
